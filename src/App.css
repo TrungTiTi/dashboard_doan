@@ -1,0 +1,29 @@
+.dashboard {
+  display: flex;
+  flex-direction: row;
+  flex: auto;
+}
+.container {
+  position: absolute;
+  left: 24%;
+  width: 76%;
+  background-color: rgb(238, 242, 246);
+  height: 100%;
+}
+
+.table-dashboard {
+  height: 100%;
+}
+
+.table-db-container {
+  height: 100%;
+  padding: 16px;
+}
+
+.table-db-container .MuiPaper-root {
+  height: 80%;
+}
+
+.table-db-container .MuiBox-root {
+  height: 90%;
+}

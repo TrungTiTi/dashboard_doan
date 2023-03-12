@@ -1,0 +1,30 @@
+.layout {
+    height: 100vh;
+    width: 24%;
+}
+
+.layout-title .layout-title-header{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.layout .layout-title .dashboard-content {
+    padding: 0 16px;
+}
+
+.layout .layout-title .a-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    text-decoration: none;
+    color: #2D465E;
+    padding: 10px 16px 10px 24px;
+    border-radius: 12px;
+}
+
+.layout .layout-title .a-content:hover {
+    background-color: rgb(237, 231, 246);
+    color: rgb(94, 53, 177);
+}

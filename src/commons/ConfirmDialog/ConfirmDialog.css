@@ -1,0 +1,15 @@
+.confirm-dialog .MuiPaper-root {
+    width: 40% !important;
+    height: 40vh !important;
+}
+
+.confirm-dialog .dialog-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.confirm-dialog .dialog-content .ic-delete {
+    width: 50%;
+    height: 50%;
+}

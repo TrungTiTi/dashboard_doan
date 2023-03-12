@@ -1,0 +1,38 @@
+.dialog-model .MuiPaper-root {
+    max-width: 100% !important;
+    max-height: 100vh !important;
+    width: 80% !important;
+    height: 80vh;
+}
+
+.dialog-content {
+    display: flex;
+    overflow: hidden;
+    border-top: 1px solid black;
+}
+
+.dg-right-content, .dg-left-content {
+    width: 50%;
+    padding: 10px;
+    height: 100%;
+}
+
+.img-preview {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.img-preview img {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+.img-preview svg {
+    position: absolute;
+    z-index: 2;
+}
+
+.img-preview svg:hover {
+    cursor: pointer;
+}
