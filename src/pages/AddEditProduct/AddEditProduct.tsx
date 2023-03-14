@@ -96,4 +96,4 @@ const AddEditProduct = () => {
   );
 }
 
-export default AddEditProduct;
+export default observer(AddEditProduct);

@@ -27,6 +27,14 @@ const Layout: React.FC = () => {
                         </span>
                     </a>
                 </div>
+                <div className='dashboard-content'>
+                    <a href='/list-cate' className='a-content'>
+                        <AllInboxIcon />
+                        <span>
+                            List Category
+                        </span>
+                    </a>
+                </div>
             </div>
         </div>
     )

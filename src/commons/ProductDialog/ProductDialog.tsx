@@ -12,7 +12,7 @@ import '../Dialog/Dialog.css';
 import { collection, getDocs, doc, setDoc, deleteDoc, updateDoc, addDoc, getDoc, query, where, limit } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { db, storage } from '../../firebase';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import CancelIcon from '@mui/icons-material/Cancel';
 import _, { cloneDeep } from 'lodash';
 
@@ -235,10 +235,6 @@ const ProductDialog: React.FC<IDialog> = (props) => {
       >
         <DialogTitle>{"Use Google's location service?"}</DialogTitle>
         <DialogContent className='dialog-content'>
-          {/* <DialogContentText id="alert-dialog-slide-description">
-            Let Google help apps determine location. This means sending anonymous
-            location data to Google, even when no apps are running.
-          </DialogContentText> */}
           <div className='dg-left-content'>
             {
               product.image.length ? 
@@ -255,6 +251,44 @@ const ProductDialog: React.FC<IDialog> = (props) => {
                   <input type='file' style={{width: '50%'}} onChange={handleChooseImg} required multiple/>
               </div>
             }
+            {/* <FormControl sx={{ m: 1, minWidth: 150 }}>
+            <InputLabel variant="standard" htmlFor="uncontrolled-native">Select Category</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={listCate.cateId}
+                label="name"
+                onChange={handleSelectCate}
+              >
+                {
+                  categoryStore.categoryData && categoryStore.categoryData.map((item) => {
+                    return (
+                      <MenuItem value={item.id}>{item.name}</MenuItem>
+                    )
+                  })
+                }
+                
+              </Select>
+            </FormControl>
+            <FormControl sx={{ m: 1, minWidth: 150 }}>
+            <InputLabel variant="standard" htmlFor="uncontrolled-native">Select Category</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={listCate.cateId}
+                label="name"
+                onChange={handleSelectCate}
+              >
+                {
+                  categoryStore.categoryData && categoryStore.categoryData.map((item) => {
+                    return (
+                      <MenuItem value={item.id}>{item.name}</MenuItem>
+                    )
+                  })
+                }
+                
+              </Select>
+            </FormControl> */}
           </div>
           <div className='dg-right-content'>
             <div>
