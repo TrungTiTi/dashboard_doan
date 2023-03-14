@@ -12,9 +12,11 @@ import '../Dialog/Dialog.css';
 import { collection, getDocs, doc, setDoc, deleteDoc, updateDoc, addDoc, getDoc, query, where, limit } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { db, storage } from '../../firebase';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextareaAutosize } from '@mui/material';
 import CancelIcon from '@mui/icons-material/Cancel';
 import _, { cloneDeep } from 'lodash';
+import { useListCateStore } from '../../stores/ListCateStore';
+import { useCategoryStore } from '../../stores/Category';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -40,13 +42,13 @@ interface IProduct {
   id?: string;
   name?: string;
   image?: any;
-  title?: string;
-  titleContent?: string;
   desscription?: string;
   price?: number;
   condition?: string;
   case?: string;
   paymentMethod?: string;
+  cateId?: string;
+  listCateId?: string;
 }
 
 const ProductDialog: React.FC<IDialog> = (props) => {
@@ -63,25 +65,31 @@ const ProductDialog: React.FC<IDialog> = (props) => {
   const [categoryName, setCategoryName] = React.useState<string>('');
   const [product, setProduct] = React.useState<IProduct>({
     image: [],
-    title: '',
     name: '',
-    titleContent: '',
     desscription: '',
     price: 0,
     condition: '',
     case: '',
-    paymentMethod: ''
+    paymentMethod: '',
+    listCateId: '',
+    cateId: ''
   });
+  const [listCateSelect, setListCateSelect] = React.useState<any[]>([]);
   const [imgArr, setImgArr] = React.useState<any>([]);
+  const listCateStore = useListCateStore();
+  const categoryStore = useCategoryStore();
 
   const handleClose = () => {
     setOpen(false);
-    setProduct({...product, image: []});
+    onResetData()
+    // setProduct({...product, image: []});
   };
 
-  const FormCategory = () => {
-
-  };
+  React.useEffect(() => {
+    console.log('111111')
+    categoryStore.getCates();
+    listCateStore.getListCates();
+  }, [])
 
   React.useEffect(() => {
     if (isEdit && data) {
@@ -91,18 +99,18 @@ const ProductDialog: React.FC<IDialog> = (props) => {
   }, [isEdit, data]);
 
   const handleChangeData = (value: any) => {
-    setProduct({
-        titleContent: value?.titleContent,
-        desscription: value?.desscription,
-        price: value?.price,
-        condition: value?.condition,
-        case: value?.case,
-        paymentMethod: value?.paymentMethod,
-        image: value?.image,
-        title: value?.title,
-        name: value?.name,
-        id: value?.id
-    })
+    // setProduct({
+    //     titleContent: value?.titleContent,
+    //     desscription: value?.desscription,
+    //     price: value?.price,
+    //     condition: value?.condition,
+    //     case: value?.case,
+    //     paymentMethod: value?.paymentMethod,
+    //     image: value?.image,
+    //     title: value?.title,
+    //     name: value?.name,
+    //     id: value?.id
+    // })
   }
 
   React.useEffect(() => {
@@ -142,13 +150,13 @@ const ProductDialog: React.FC<IDialog> = (props) => {
       if (isEdit && data.image === product.image) {
         await updateDoc(doc(db, "product", data.id), {
             name: product.name,
-            title: product.title,
-            titleContent: product?.titleContent,
             desscription: product?.desscription,
             price: product?.price,
             condition: product?.condition,
             case: product?.case,
             paymentMethod: product?.paymentMethod,
+            cateId: product.cateId,
+            listCateId: product.listCateId
         })
       } else {
         imagePreview.map((image: any) => {
@@ -161,26 +169,26 @@ const ProductDialog: React.FC<IDialog> = (props) => {
                 if (isEdit) {
                   await updateDoc(doc(db, "product", data.id), {
                     name: product.name,
-                    title: product.title,
-                    titleContent: product?.titleContent,
                     desscription: product?.desscription,
                     price: product?.price,
                     condition: product?.condition,
                     case: product?.case,
                     paymentMethod: product?.paymentMethod,
-                    image: product?.image
+                    image: product?.image,
+                    cateId: product.cateId,
+                    listCateId: product.listCateId
                   })
                 } else {
                   await addDoc(collection(db, "product"), {
                     name: product.name,
-                    title: product.title,
-                    titleContent: product?.titleContent,
                     desscription: product?.desscription,
                     price: product?.price,
                     condition: product?.condition,
                     case: product?.case,
                     paymentMethod: product?.paymentMethod,
-                    image: product?.image
+                    image: product?.image,
+                    cateId: product.cateId,
+                    listCateId: product.listCateId
                  })
                 }
               })
@@ -200,7 +208,7 @@ const ProductDialog: React.FC<IDialog> = (props) => {
 
   const onCheckForm = () => {
 
-    if (!product.name || !product.title || !product.image.length) {
+    if (!product.name || !product.cateId || !product.image.length || !product.listCateId) {
       return true;
     }
     if (isEdit && _.isEqual(product, data)) {
@@ -210,9 +218,7 @@ const ProductDialog: React.FC<IDialog> = (props) => {
   };
 
   const onResetData = () => {
-    // setCategoryName('');
-    // setCategoryTitle('');
-    setProduct({...product, name: '', title: ''})
+    setProduct({...product, name: '', listCateId: '', cateId: '', })
     setImagePreview(null);
     setImgArr([]);
   }
@@ -220,9 +226,18 @@ const ProductDialog: React.FC<IDialog> = (props) => {
   const handleRemoveImg = (file: any, index: number) => {
     const fileClone = product.image.filter((item: any) => item !== file)
     // fileClone.slice(index + 1, 1);
-    console.log('fileClone', fileClone,index)
     setProduct({...product, image: fileClone});
   }
+
+  const handleSelectCategory = (e: SelectChangeEvent) => {
+    setProduct({...product, cateId: e.target.value});
+    const listCateR: any[] = listCateStore.listCateData.filter((item) => item.cateId === e.target.value);
+    setListCateSelect(listCateR);
+  };
+
+  const handleSelectCateInCategory = (e: SelectChangeEvent) => {
+    setProduct({...product, listCateId: e.target.value});
+  };
 
   return (
     <div>
@@ -235,10 +250,6 @@ const ProductDialog: React.FC<IDialog> = (props) => {
       >
         <DialogTitle>{"Use Google's location service?"}</DialogTitle>
         <DialogContent className='dialog-content'>
-          {/* <DialogContentText id="alert-dialog-slide-description">
-            Let Google help apps determine location. This means sending anonymous
-            location data to Google, even when no apps are running.
-          </DialogContentText> */}
           <div className='dg-left-content'>
             {
               product.image.length ? 
@@ -255,6 +266,44 @@ const ProductDialog: React.FC<IDialog> = (props) => {
                   <input type='file' style={{width: '50%'}} onChange={handleChooseImg} required multiple/>
               </div>
             }
+            <FormControl sx={{ m: 1, minWidth: 150 }}>
+            <InputLabel variant="standard" htmlFor="uncontrolled-native">Select Category</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={product.cateId}
+                label="name"
+                onChange={handleSelectCategory}
+              >
+                {
+                  categoryStore.categoryData && categoryStore.categoryData.map((item) => {
+                    return (
+                      <MenuItem value={item.id}>{item.name}</MenuItem>
+                    )
+                  })
+                }
+                
+              </Select>
+            </FormControl>
+            <FormControl sx={{ m: 1, minWidth: 150 }}>
+            <InputLabel variant="standard" htmlFor="uncontrolled-native">Select Type</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="select-list-cate"
+                value={product.listCateId}
+                label="Select Type"
+                onChange={handleSelectCateInCategory}
+              >
+                {
+                  listCateSelect.length &&  listCateSelect.map((item) => {
+                    return (
+                      <MenuItem value={item.id}>{item.name}</MenuItem>
+                    )
+                  })
+                }
+                
+              </Select>
+            </FormControl>
           </div>
           <div className='dg-right-content'>
             <div>
@@ -262,16 +311,13 @@ const ProductDialog: React.FC<IDialog> = (props) => {
                 <TextField id="outlined-categoryName" onChange={(e) => setProduct({...product, name: e.target.value})} value={product?.name} />
             </div>
             <div>
-                <span>Product Title</span> <br></br>
-                <TextField id="outlined-basic" onChange={(e) => setProduct({...product, title: e.target.value})} value={product?.title} />
-            </div>
-            <div>
-                <span>Title Content</span> <br></br>
-                <TextField id="outlined-basic" onChange={(e) => setProduct({...product, titleContent: e.target.value})} value={product?.titleContent} />
-            </div>
-            <div>
                 <span>Desscription</span> <br></br>
-                <TextField id="outlined-basic" onChange={(e) => setProduct({...product, desscription: e.target.value})} value={product?.desscription} />
+                <TextareaAutosize 
+                  minRows={10}
+                  onChange={(e) => setProduct({...product, desscription: e.target.value})} 
+                  value={product?.desscription} 
+                />
+                {/* <TextField id="outlined-basic" onChange={(e) => setProduct({...product, desscription: e.target.value})} value={product?.desscription} /> */}
             </div>
             <div>
                 <span>Price</span> <br></br>
