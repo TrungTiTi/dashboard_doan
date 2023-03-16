@@ -38,16 +38,40 @@ const AddEditListCate = () => {
       label: 'Name',
     },
     {
-      id: 'title',
+      id: 'cateId',
       numeric: true,
       disablePadding: false,
-      label: 'Title',
+      label: 'Cate Id',
     },
     {
-      id: 'id',
+      id: 'description',
       numeric: true,
       disablePadding: false,
-      label: 'Id',
+      label: 'description',
+    },
+    {
+      id: 'condition',
+      numeric: true,
+      disablePadding: false,
+      label: 'condition',
+    },
+    {
+      id: 'case',
+      numeric: true,
+      disablePadding: false,
+      label: 'case',
+    },
+    {
+      id: 'paymentMethod',
+      numeric: true,
+      disablePadding: false,
+      label: 'paymentMethod',
+    },
+    {
+      id: 'detailTitle',
+      numeric: true,
+      disablePadding: false,
+      label: 'detailTitle',
     },
   ]      
 

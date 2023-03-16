@@ -11,7 +11,7 @@ import TextField from '@mui/material/TextField';
 import { collection, getDocs, doc, setDoc, deleteDoc, updateDoc, addDoc, getDoc, query, where, limit } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { db, storage } from '../../../firebase';
-import { CircularProgress, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import { CircularProgress, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextareaAutosize } from '@mui/material';
 import CancelIcon from '@mui/icons-material/Cancel';
 import _ from 'lodash';
 import { useCategoryStore } from '../../../stores/Category';
@@ -40,7 +40,23 @@ interface IDialog {
 interface IListCate {
   id?: string;
   name?: string;
-  cateId?: string
+  cateId?: string;
+  description: string;
+  condition: string;
+  case: string;
+  paymentMethod: string;
+  detailTitle?: string;
+
+}
+
+const LIST_CATE_DEFAULT = {
+  cateId: '',
+  name: '',
+  description: '',
+  condition: '',
+  case: '',
+  paymentMethod: '',
+  detailTitle: ''
 }
 
 const ListCateDialog: React.FC<IDialog> = (props) => {
@@ -54,10 +70,7 @@ const ListCateDialog: React.FC<IDialog> = (props) => {
         data
     } = props;
   const [categoryName, setCategoryName] = React.useState<string>('');
-  const [listCate, setListCate] = React.useState<IListCate>({
-    cateId: '',
-    name: ''
-  });
+  const [listCate, setListCate] = React.useState<IListCate>({...LIST_CATE_DEFAULT});
   // const []
   const categoryStore = useCategoryStore();
   const listCateStore = useListCateStore();
@@ -81,7 +94,12 @@ const ListCateDialog: React.FC<IDialog> = (props) => {
     setListCate({
       cateId: value?.cateId,
       name: value?.name,
-      id: value?.id
+      id: value?.id,
+      description: value?.description,
+      condition: value?.condition,
+      case: value?.case,
+      paymentMethod: value?.paymentMethod,
+      detailTitle: value?.detailTitle || ''
     })
   }
 
@@ -91,9 +109,19 @@ const ListCateDialog: React.FC<IDialog> = (props) => {
         const newFood = isEdit ? await updateDoc(doc(db, "listCate", data.id), {
             name: listCate.name,
             cateId: listCate.cateId,
+            description: listCate.description,
+            condition: listCate.condition,
+            case: listCate.case,
+            paymentMethod: listCate.paymentMethod,
+            detailTitle: listCate.detailTitle
         }) : await addDoc(collection(db, "listCate"), {
           name: listCate.name,
           cateId: listCate.cateId,
+          description: listCate.description,
+          condition: listCate.condition,
+          case: listCate.case,
+          paymentMethod: listCate.paymentMethod,
+          detailTitle: listCate.detailTitle
       })
       listCateStore.getListCates();
     } catch (error) {
@@ -117,7 +145,7 @@ const ListCateDialog: React.FC<IDialog> = (props) => {
   };
 
   const onResetData = () => {
-    setListCate({name: '', cateId: ''})
+    setListCate({...LIST_CATE_DEFAULT})
   }
 console.log('123', listCate.cateId)
   const handleSelectCate = (e: SelectChangeEvent) => {
@@ -161,6 +189,42 @@ console.log('123', listCate.cateId)
           <div className='dg-right-content'>
             <span>listCate Name</span> <br></br>
             <TextField id="outlined-categoryName" onChange={(e) => setListCate({...listCate, name: e.target.value})} value={listCate?.name} />
+            <div>
+              <span>Detail title</span> <br></br>
+              <TextField id="outlined-categoryName" onChange={(e) => setListCate({...listCate, detailTitle: e.target.value})} value={listCate?.detailTitle} />
+            </div>
+            <div>
+                <span>Desscription</span> <br></br>
+                <TextareaAutosize 
+                  minRows={10}
+                  onChange={(e) => setListCate({...listCate, description: e.target.value})} 
+                  value={listCate?.description} 
+                />
+            </div>
+            <div>
+                <span>Condition</span> <br></br>
+                <TextareaAutosize 
+                  minRows={10}
+                  onChange={(e) => setListCate({...listCate, condition: e.target.value})}
+                  value={listCate?.condition} 
+                />
+            </div>
+            <div>
+                <span>Case</span> <br></br>
+                <TextareaAutosize 
+                  minRows={10}
+                  onChange={(e) => setListCate({...listCate, case: e.target.value})}
+                  value={listCate?.case}
+                />
+            </div>
+            <div>
+                <span>paymentMethod Method</span> <br></br>
+                <TextareaAutosize 
+                  minRows={10}
+                  onChange={(e) => setListCate({...listCate, paymentMethod: e.target.value})}
+                  value={listCate?.paymentMethod}
+                />
+            </div>
           </div>
         </DialogContent>
           <DialogActions>

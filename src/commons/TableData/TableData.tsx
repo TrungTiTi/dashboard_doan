@@ -421,6 +421,7 @@ const TableData: React.FC<ITable> = (props) => {
         data={selected}
         setLoading={setLoading}
         setSelected={setSelected}
+        type={typeTable}
       >
 
       </ConfirmDialog>

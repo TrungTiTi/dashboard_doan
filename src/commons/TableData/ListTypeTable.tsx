@@ -44,8 +44,12 @@ const ListTypeTable = (props: ICategory) => {
             >
             {row.name}
             </TableCell>
-            <TableCell align="right">{row.title}</TableCell>
-            <TableCell align="right">{row.id}</TableCell>
+            <TableCell align="right">{row.cateId}</TableCell>
+            <TableCell align="right">{row.description}</TableCell>
+            <TableCell align="right">{row.condition}</TableCell>
+            <TableCell align="right">{row.case}</TableCell>
+            <TableCell align="right">{row.paymentMethod}</TableCell>
+            <TableCell align="right">{row.detailTitle}</TableCell>
         </TableRow>
     )
 }

@@ -10,6 +10,7 @@ import './ConfirmDialog.css';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../firebase';
+import { TYPE_TABLE } from '../Constant';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -59,8 +60,19 @@ const ConfirmDialog: React.FC<IDialog> = (props) => {
       setLoading(true);
       try {
           if (data.length) {
-              const dataMap = data.map((idCate: string) => {
-                  return deleteDoc(doc(db, "category", idCate))
+              const dataMap = data.map((id: string) => {
+                  switch (type) {
+                    case TYPE_TABLE.CATEGORY:
+                      return deleteDoc(doc(db, "category", id))
+                    case TYPE_TABLE.PRODUCT:
+                      return deleteDoc(doc(db, "product", id))
+                    case TYPE_TABLE.LISTCATE:
+                      console.log('3')
+                      return deleteDoc(doc(db, "listCate", id))
+                  
+                    default:
+                      break;
+                  }
               })
               const res = await Promise.all(dataMap);
               if (res) {

@@ -12,9 +12,11 @@ import '../Dialog/Dialog.css';
 import { collection, getDocs, doc, setDoc, deleteDoc, updateDoc, addDoc, getDoc, query, where, limit } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { db, storage } from '../../firebase';
-import { CircularProgress, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { CircularProgress, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextareaAutosize } from '@mui/material';
 import CancelIcon from '@mui/icons-material/Cancel';
 import _, { cloneDeep } from 'lodash';
+import { useListCateStore } from '../../stores/ListCateStore';
+import { useCategoryStore } from '../../stores/Category';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -40,13 +42,9 @@ interface IProduct {
   id?: string;
   name?: string;
   image?: any;
-  title?: string;
-  titleContent?: string;
-  desscription?: string;
   price?: number;
-  condition?: string;
-  case?: string;
-  paymentMethod?: string;
+  cateId?: string;
+  listCateId?: string;
 }
 
 const ProductDialog: React.FC<IDialog> = (props) => {
@@ -63,25 +61,27 @@ const ProductDialog: React.FC<IDialog> = (props) => {
   const [categoryName, setCategoryName] = React.useState<string>('');
   const [product, setProduct] = React.useState<IProduct>({
     image: [],
-    title: '',
     name: '',
-    titleContent: '',
-    desscription: '',
     price: 0,
-    condition: '',
-    case: '',
-    paymentMethod: ''
+    listCateId: '',
+    cateId: ''
   });
+  const [listCateSelect, setListCateSelect] = React.useState<any[]>([]);
   const [imgArr, setImgArr] = React.useState<any>([]);
+  const listCateStore = useListCateStore();
+  const categoryStore = useCategoryStore();
 
   const handleClose = () => {
     setOpen(false);
-    setProduct({...product, image: []});
+    onResetData()
+    // setProduct({...product, image: []});
   };
 
-  const FormCategory = () => {
-
-  };
+  React.useEffect(() => {
+    console.log('111111')
+    categoryStore.getCates();
+    listCateStore.getListCates();
+  }, [])
 
   React.useEffect(() => {
     if (isEdit && data) {
@@ -92,14 +92,8 @@ const ProductDialog: React.FC<IDialog> = (props) => {
 
   const handleChangeData = (value: any) => {
     setProduct({
-        titleContent: value?.titleContent,
-        desscription: value?.desscription,
         price: value?.price,
-        condition: value?.condition,
-        case: value?.case,
-        paymentMethod: value?.paymentMethod,
         image: value?.image,
-        title: value?.title,
         name: value?.name,
         id: value?.id
     })
@@ -142,13 +136,9 @@ const ProductDialog: React.FC<IDialog> = (props) => {
       if (isEdit && data.image === product.image) {
         await updateDoc(doc(db, "product", data.id), {
             name: product.name,
-            title: product.title,
-            titleContent: product?.titleContent,
-            desscription: product?.desscription,
             price: product?.price,
-            condition: product?.condition,
-            case: product?.case,
-            paymentMethod: product?.paymentMethod,
+            cateId: product.cateId,
+            listCateId: product.listCateId
         })
       } else {
         imagePreview.map((image: any) => {
@@ -161,26 +151,18 @@ const ProductDialog: React.FC<IDialog> = (props) => {
                 if (isEdit) {
                   await updateDoc(doc(db, "product", data.id), {
                     name: product.name,
-                    title: product.title,
-                    titleContent: product?.titleContent,
-                    desscription: product?.desscription,
                     price: product?.price,
-                    condition: product?.condition,
-                    case: product?.case,
-                    paymentMethod: product?.paymentMethod,
-                    image: product?.image
+                    image: product?.image,
+                    cateId: product.cateId,
+                    listCateId: product.listCateId
                   })
                 } else {
                   await addDoc(collection(db, "product"), {
                     name: product.name,
-                    title: product.title,
-                    titleContent: product?.titleContent,
-                    desscription: product?.desscription,
                     price: product?.price,
-                    condition: product?.condition,
-                    case: product?.case,
-                    paymentMethod: product?.paymentMethod,
-                    image: product?.image
+                    image: product?.image,
+                    cateId: product.cateId,
+                    listCateId: product.listCateId
                  })
                 }
               })
@@ -200,7 +182,7 @@ const ProductDialog: React.FC<IDialog> = (props) => {
 
   const onCheckForm = () => {
 
-    if (!product.name || !product.title || !product.image.length) {
+    if (!product.name || !product.cateId || !product.image.length || !product.listCateId) {
       return true;
     }
     if (isEdit && _.isEqual(product, data)) {
@@ -210,9 +192,7 @@ const ProductDialog: React.FC<IDialog> = (props) => {
   };
 
   const onResetData = () => {
-    // setCategoryName('');
-    // setCategoryTitle('');
-    setProduct({...product, name: '', title: ''})
+    setProduct({...product, name: '', listCateId: '', cateId: '', })
     setImagePreview(null);
     setImgArr([]);
   }
@@ -220,9 +200,18 @@ const ProductDialog: React.FC<IDialog> = (props) => {
   const handleRemoveImg = (file: any, index: number) => {
     const fileClone = product.image.filter((item: any) => item !== file)
     // fileClone.slice(index + 1, 1);
-    console.log('fileClone', fileClone,index)
     setProduct({...product, image: fileClone});
   }
+
+  const handleSelectCategory = (e: SelectChangeEvent) => {
+    setProduct({...product, cateId: e.target.value});
+    const listCateR: any[] = listCateStore.listCateData.filter((item) => item.cateId === e.target.value);
+    setListCateSelect(listCateR);
+  };
+
+  const handleSelectCateInCategory = (e: SelectChangeEvent) => {
+    setProduct({...product, listCateId: e.target.value});
+  };
 
   return (
     <div>
@@ -251,14 +240,14 @@ const ProductDialog: React.FC<IDialog> = (props) => {
                   <input type='file' style={{width: '50%'}} onChange={handleChooseImg} required multiple/>
               </div>
             }
-            {/* <FormControl sx={{ m: 1, minWidth: 150 }}>
+            <FormControl sx={{ m: 1, minWidth: 150 }}>
             <InputLabel variant="standard" htmlFor="uncontrolled-native">Select Category</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={listCate.cateId}
+                value={product.cateId}
                 label="name"
-                onChange={handleSelectCate}
+                onChange={handleSelectCategory}
               >
                 {
                   categoryStore.categoryData && categoryStore.categoryData.map((item) => {
@@ -271,16 +260,16 @@ const ProductDialog: React.FC<IDialog> = (props) => {
               </Select>
             </FormControl>
             <FormControl sx={{ m: 1, minWidth: 150 }}>
-            <InputLabel variant="standard" htmlFor="uncontrolled-native">Select Category</InputLabel>
+            <InputLabel variant="standard" htmlFor="uncontrolled-native">Select Type</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={listCate.cateId}
-                label="name"
-                onChange={handleSelectCate}
+                id="select-list-cate"
+                value={product.listCateId}
+                label="Select Type"
+                onChange={handleSelectCateInCategory}
               >
                 {
-                  categoryStore.categoryData && categoryStore.categoryData.map((item) => {
+                  listCateSelect.length &&  listCateSelect.map((item) => {
                     return (
                       <MenuItem value={item.id}>{item.name}</MenuItem>
                     )
@@ -288,7 +277,7 @@ const ProductDialog: React.FC<IDialog> = (props) => {
                 }
                 
               </Select>
-            </FormControl> */}
+            </FormControl>
           </div>
           <div className='dg-right-content'>
             <div>
@@ -296,32 +285,8 @@ const ProductDialog: React.FC<IDialog> = (props) => {
                 <TextField id="outlined-categoryName" onChange={(e) => setProduct({...product, name: e.target.value})} value={product?.name} />
             </div>
             <div>
-                <span>Product Title</span> <br></br>
-                <TextField id="outlined-basic" onChange={(e) => setProduct({...product, title: e.target.value})} value={product?.title} />
-            </div>
-            <div>
-                <span>Title Content</span> <br></br>
-                <TextField id="outlined-basic" onChange={(e) => setProduct({...product, titleContent: e.target.value})} value={product?.titleContent} />
-            </div>
-            <div>
-                <span>Desscription</span> <br></br>
-                <TextField id="outlined-basic" onChange={(e) => setProduct({...product, desscription: e.target.value})} value={product?.desscription} />
-            </div>
-            <div>
                 <span>Price</span> <br></br>
                 <TextField id="outlined-basic" type={'number'} onChange={(e) => setProduct({...product, price: +(e.target.value)})} value={product?.price} />
-            </div>
-            <div>
-                <span>Condition</span> <br></br>
-                <TextField id="outlined-basic" onChange={(e) => setProduct({...product, condition: e.target.value})} value={product?.condition} />
-            </div>
-            <div>
-                <span>Case</span> <br></br>
-                <TextField id="outlined-basic" onChange={(e) => setProduct({...product, case: e.target.value})} value={product?.case} />
-            </div>
-            <div>
-                <span>Payment Method</span> <br></br>
-                <TextField id="outlined-basic" onChange={(e) => setProduct({...product, paymentMethod: e.target.value})} value={product?.paymentMethod} />
             </div>
           </div>
         </DialogContent>
