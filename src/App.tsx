@@ -5,6 +5,7 @@ import Layout from './components/Layout/Layout';
 import { Route, Routes } from 'react-router-dom';
 import AddEditCategory from './pages/AddEditCategory/AddEditCategory';
 import AddEditProduct from './pages/AddEditProduct/AddEditProduct';
+import AddEditListCate from './pages/AddEditListCate/AddEditListCate';
 
 
 const Element = ({Children}: any) => {
@@ -34,6 +35,7 @@ function App() {
       </Route>
       <Route path='/type' element={<Element Children={<AddEditCategory />} />} />
       <Route path='/product' element={<Element Children={<AddEditProduct />} />} />
+      <Route path='/list-cate' element={<Element Children={<AddEditListCate />} />} />
     </Routes>
   );
 }

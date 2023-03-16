@@ -25,6 +25,7 @@ import ConfirmDialog from '../ConfirmDialog/ConfirmDialog';
 import { TYPE_TABLE } from '../Constant';
 import CategoryTable from './CategoryTable';
 import ProductTable from './ProductTable';
+import ListTypeTable from './ListTypeTable';
 
 interface Data {
   title: string;
@@ -332,6 +333,16 @@ const TableData: React.FC<ITable> = (props) => {
                           handleShowEditDialog={handleShowEditDialog}
                         />
                       )
+                    case TYPE_TABLE.LISTCATE:   
+                      return (
+                        <ListTypeTable
+                          row={row}
+                          handleClick={handleClick}
+                          isItemSelected={isItemSelected}
+                          labelId={labelId}
+                          handleShowEditDialog={handleShowEditDialog}
+                        />
+                      )
                     default:
                       break;
                   }
@@ -410,6 +421,7 @@ const TableData: React.FC<ITable> = (props) => {
         data={selected}
         setLoading={setLoading}
         setSelected={setSelected}
+        type={typeTable}
       >
 
       </ConfirmDialog>
