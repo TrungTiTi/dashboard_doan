@@ -17,6 +17,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import _, { cloneDeep } from 'lodash';
 import { useListCateStore } from '../../stores/ListCateStore';
 import { useCategoryStore } from '../../stores/Category';
+import { observer } from 'mobx-react-lite';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -85,18 +86,25 @@ const ProductDialog: React.FC<IDialog> = (props) => {
 
   React.useEffect(() => {
     if (isEdit && data) {
-      handleChangeData(data);
+      handleGetDataWhenEdit(data);
       setCategoryName(data.name);
     }
   }, [isEdit, data]);
 
-  const handleChangeData = (value: any) => {
+  const handleGetDataWhenEdit = (value: any) => {
+    const cateIdWhenEdit = value.cateId || null;
     setProduct({
+        listCateId: value?.listCateId,
+        cateId: value?.cateId,
         price: value?.price,
-        image: value?.image,
+        image: [value?.image],
         name: value?.name,
         id: value?.id
-    })
+    });
+    if (cateIdWhenEdit) {
+      const listCateR: any[] = listCateStore.listCateData.filter((item) => item.cateId === cateIdWhenEdit);
+      setListCateSelect(listCateStore.listCateData);
+    }
   }
 
   React.useEffect(() => {
@@ -130,6 +138,16 @@ const ProductDialog: React.FC<IDialog> = (props) => {
     setImagePreview(fileImg);
   };
 
+  const handlePutProduct = (item: IProduct, url: string) => {
+    return {
+      name: item.name,
+      price: item?.price,
+      image: [url],
+      cateId: item.cateId,
+      listCateId: item.listCateId
+    }
+  }
+
   const handleAddType = async () => {
     setLoading(true);
     try {
@@ -149,21 +167,9 @@ const ProductDialog: React.FC<IDialog> = (props) => {
               getDownloadURL(uploadTask.snapshot.ref)
               .then(async(url) => {
                 if (isEdit) {
-                  await updateDoc(doc(db, "product", data.id), {
-                    name: product.name,
-                    price: product?.price,
-                    image: product?.image,
-                    cateId: product.cateId,
-                    listCateId: product.listCateId
-                  })
+                  await updateDoc(doc(db, "product", data.id), handlePutProduct(product, url))
                 } else {
-                  await addDoc(collection(db, "product"), {
-                    name: product.name,
-                    price: product?.price,
-                    image: product?.image,
-                    cateId: product.cateId,
-                    listCateId: product.listCateId
-                 })
+                  await addDoc(collection(db, "product"), handlePutProduct(product, url))
                 }
               })
             }
@@ -177,7 +183,7 @@ const ProductDialog: React.FC<IDialog> = (props) => {
     }
     setLoading(false);
     // setOpen(false);
-
+    console.log('product.listCateId', product.listCateId)
   };
 
   const onCheckForm = () => {
@@ -212,7 +218,7 @@ const ProductDialog: React.FC<IDialog> = (props) => {
   const handleSelectCateInCategory = (e: SelectChangeEvent) => {
     setProduct({...product, listCateId: e.target.value});
   };
-
+console.log('select', listCateSelect)
   return (
     <div>
       <Dialog
@@ -234,7 +240,8 @@ const ProductDialog: React.FC<IDialog> = (props) => {
                         <img className='' src={item} />
                     </div>
                 )
-              }) :
+              }) 
+              :
               <div className='text__line'>
                   <span>Image</span>
                   <input type='file' style={{width: '50%'}} onChange={handleChooseImg} required multiple/>
@@ -269,11 +276,11 @@ const ProductDialog: React.FC<IDialog> = (props) => {
                 onChange={handleSelectCateInCategory}
               >
                 {
-                  listCateSelect.length &&  listCateSelect.map((item) => {
+                  listCateSelect.length ?  listCateSelect.map((item) => {
                     return (
                       <MenuItem value={item.id}>{item.name}</MenuItem>
                     )
-                  })
+                  }) : null
                 }
                 
               </Select>
@@ -302,4 +309,4 @@ const ProductDialog: React.FC<IDialog> = (props) => {
   );
 }
 
-export default ProductDialog;
+export default observer(ProductDialog);

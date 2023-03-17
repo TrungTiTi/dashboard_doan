@@ -15,6 +15,8 @@ import { db, storage } from '../../firebase';
 import { CircularProgress } from '@mui/material';
 import CancelIcon from '@mui/icons-material/Cancel';
 import _ from 'lodash';
+import { useCategoryStore } from '../../stores/Category';
+import { TEXT_ERROR } from '../Constant';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -62,6 +64,12 @@ const DialogModel: React.FC<IDialog> = (props) => {
     title: '',
     name: ''
   });
+  const [isNameExist, setIsNameExist] = React.useState<boolean>(false);
+  const categoryStore = useCategoryStore();
+
+  React.useEffect(() => {
+    categoryStore.getCates();
+  }, []);
 
   const handleClose = () => {
     setOpen(false);
@@ -112,6 +120,13 @@ const DialogModel: React.FC<IDialog> = (props) => {
   };
 
   const handleAddType = async () => {
+    if (categoryStore.categoryData.length) {
+      const categoryFound = categoryStore.categoryData.filter((item) => item.name.toUpperCase() === category.name?.toUpperCase());
+      if (categoryFound.length) {
+        setIsNameExist(true);
+        return;
+      }
+    }
     setLoading(true);
     try {
       if (isEdit && data.image === category.image) {
@@ -201,7 +216,13 @@ const DialogModel: React.FC<IDialog> = (props) => {
           </div>
           <div className='dg-right-content'>
             <span>Category Name</span> <br></br>
-            <TextField id="outlined-categoryName" onChange={(e) => setCategory({...category, name: e.target.value})} value={category?.name} />
+            <TextField 
+              id="outlined-categoryName" 
+              onChange={(e) => setCategory({...category, name: e.target.value})} 
+              value={category?.name}
+              error={isNameExist}
+              helperText={isNameExist ? TEXT_ERROR.EXISTED : ''}
+            />
             <div style={{height: '10px'}}></div>
             <span>Categry Title</span> <br></br>
             <TextField id="outlined-basic" onChange={(e) => setCategory({...category, title: e.target.value})} value={category?.title} />

@@ -3,3 +3,7 @@ export enum TYPE_TABLE {
     PRODUCT = 'product',
     LISTCATE = 'listCate'
 }
+
+export enum TEXT_ERROR {
+    EXISTED = 'Name is existed'
+}
