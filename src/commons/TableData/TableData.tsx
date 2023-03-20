@@ -15,8 +15,6 @@ import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
@@ -59,10 +57,6 @@ function getComparator<Key extends keyof any>(
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-// Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
-// stableSort() brings sort stability to non-modern browsers (notably IE11). If you
-// only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
-// with exampleArray.slice().sort(exampleComparator)
 function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
   const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
   stabilizedThis.sort((a, b) => {
@@ -276,7 +270,6 @@ const TableData: React.FC<ITable> = (props) => {
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
-  // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
@@ -284,8 +277,6 @@ const TableData: React.FC<ITable> = (props) => {
     setCategoryData(data);
     setOpenDialog(true);
   }
-
-  console.log('selected', selected)
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -320,7 +311,7 @@ const TableData: React.FC<ITable> = (props) => {
                           handleClick={handleClick}
                           isItemSelected={isItemSelected}
                           labelId={labelId}
-                          handleShowEditDialog={handleShowEditDialog}
+                          setLoading={setLoading}
                         />
                       )
                     case TYPE_TABLE.PRODUCT:   
@@ -330,7 +321,7 @@ const TableData: React.FC<ITable> = (props) => {
                           handleClick={handleClick}
                           isItemSelected={isItemSelected}
                           labelId={labelId}
-                          handleShowEditDialog={handleShowEditDialog}
+                          setLoading={setLoading}
                         />
                       )
                     case TYPE_TABLE.LISTCATE:   
@@ -340,50 +331,12 @@ const TableData: React.FC<ITable> = (props) => {
                           handleClick={handleClick}
                           isItemSelected={isItemSelected}
                           labelId={labelId}
-                          handleShowEditDialog={handleShowEditDialog}
+                          setLoading={setLoading}
                         />
                       )
                     default:
                       break;
                   }
-                  // return (
-                  //   <TableRow
-                  //     hover
-                  //     onClick={(event) => handleClick(event, row.id)}
-                  //     role="checkbox"
-                  //     aria-checked={isItemSelected}
-                  //     tabIndex={-1}
-                  //     key={row.id}
-                  //     selected={isItemSelected}
-                  //   >
-                  //     <TableCell padding="checkbox">
-                  //       <Checkbox
-                  //         color="primary"
-                  //         checked={isItemSelected}
-                  //         inputProps={{
-                  //           'aria-labelledby': labelId,
-                  //         }}
-                  //       />
-                  //     </TableCell>
-                  //     <TableCell
-                  //       component="th"
-                  //       id={labelId}
-                  //       scope="row"
-                  //       padding="none"
-                  //       onClick={() => handleShowEditDialog(row)}
-                  //     >
-                  //       {row.name}
-                  //     </TableCell>
-                  //     <TableCell align="right">{row.title}</TableCell>
-                  //     {
-                  //       row?.image &&
-                  //       <TableCell align="right">
-                  //         <img style={{width: 50, height: 50}} src={row.image} />
-                  //       </TableCell>
-                  //     }
-                  //     <TableCell align="right">{row.id}</TableCell>
-                  //   </TableRow>
-                  // );
                 })}
               {emptyRows > 0 && (
                 <TableRow
@@ -407,14 +360,6 @@ const TableData: React.FC<ITable> = (props) => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      <DialogModel
-        open={openDialog}
-        setOpen={setOpenDialog}
-        setLoading={setLoading}
-        data={categoryData}
-        isEdit={true}
-      >
-      </DialogModel>
       <ConfirmDialog
         open={showConfirmDelete}
         setOpen={setShowConfirmDelete}

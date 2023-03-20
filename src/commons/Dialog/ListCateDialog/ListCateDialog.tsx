@@ -74,12 +74,14 @@ const ListCateDialog: React.FC<IDialog> = (props) => {
   // const []
   const categoryStore = useCategoryStore();
   const listCateStore = useListCateStore();
+  const [isNameExist, setIsNameExist] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     categoryStore.getCates();
   }, []);
 
   const handleClose = () => {
+    onResetData();
     setOpen(false);
   };
 
@@ -103,26 +105,31 @@ const ListCateDialog: React.FC<IDialog> = (props) => {
     })
   }
 
+  const handlePutListCate = (item: any) => {
+    return {
+      name: item.name,
+      cateId: item.cateId,
+      description: item.description,
+      condition: item.condition,
+      case: item.case,
+      paymentMethod: item.paymentMethod,
+      detailTitle: item.detailTitle
+    }
+  }
+
   const handleAddType = async () => {
+    if (listCateStore.listCateData.length && listCate.name) {
+      const listCateFound: any = listCateStore.listCateData.filter((item) => item.cateId === listCate.cateId);
+      console.log('listCateFound', listCateFound)
+      if (listCateFound[0].name.toUpperCase() === listCate.name.toUpperCase()) {
+        setIsNameExist(true);
+        return;
+      }
+    }
     setLoading(true);
     try {
-        const newFood = isEdit ? await updateDoc(doc(db, "listCate", data.id), {
-            name: listCate.name,
-            cateId: listCate.cateId,
-            description: listCate.description,
-            condition: listCate.condition,
-            case: listCate.case,
-            paymentMethod: listCate.paymentMethod,
-            detailTitle: listCate.detailTitle
-        }) : await addDoc(collection(db, "listCate"), {
-          name: listCate.name,
-          cateId: listCate.cateId,
-          description: listCate.description,
-          condition: listCate.condition,
-          case: listCate.case,
-          paymentMethod: listCate.paymentMethod,
-          detailTitle: listCate.detailTitle
-      })
+        const newFood = isEdit ? await updateDoc(doc(db, "listCate", data.id), handlePutListCate(listCate)) 
+        : await addDoc(collection(db, "listCate"), handlePutListCate(listCate))
       listCateStore.getListCates();
     } catch (error) {
       
@@ -147,10 +154,14 @@ const ListCateDialog: React.FC<IDialog> = (props) => {
   const onResetData = () => {
     setListCate({...LIST_CATE_DEFAULT})
   }
-console.log('123', listCate.cateId)
+
   const handleSelectCate = (e: SelectChangeEvent) => {
     setListCate({...listCate, cateId: e.target.value})
   };
+
+  const handleChange = (value: any, field: string) => {
+    setListCate({...listCate, [field]: value})
+  }
 
   return (
     <div>
@@ -188,16 +199,27 @@ console.log('123', listCate.cateId)
           </div>
           <div className='dg-right-content'>
             <span>listCate Name</span> <br></br>
-            <TextField id="outlined-categoryName" onChange={(e) => setListCate({...listCate, name: e.target.value})} value={listCate?.name} />
+            <TextField id="outlined-categoryName" 
+              onChange={(e) => 
+                {
+                  setIsNameExist(false);
+                  handleChange(e.target.value, 'name')
+                }} 
+              value={listCate?.name} 
+              error={isNameExist}
+            />
             <div>
               <span>Detail title</span> <br></br>
-              <TextField id="outlined-categoryName" onChange={(e) => setListCate({...listCate, detailTitle: e.target.value})} value={listCate?.detailTitle} />
+              <TextField id="outlined-categoryName" 
+                onChange={(e) => handleChange(e.target.value, 'detailTitle')}
+                value={listCate?.detailTitle} 
+              />
             </div>
             <div>
                 <span>Desscription</span> <br></br>
                 <TextareaAutosize 
                   minRows={10}
-                  onChange={(e) => setListCate({...listCate, description: e.target.value})} 
+                  onChange={(e) => handleChange(e.target.value, 'description')} 
                   value={listCate?.description} 
                 />
             </div>
@@ -205,7 +227,7 @@ console.log('123', listCate.cateId)
                 <span>Condition</span> <br></br>
                 <TextareaAutosize 
                   minRows={10}
-                  onChange={(e) => setListCate({...listCate, condition: e.target.value})}
+                  onChange={(e) => handleChange(e.target.value, 'condition')}
                   value={listCate?.condition} 
                 />
             </div>
@@ -213,15 +235,15 @@ console.log('123', listCate.cateId)
                 <span>Case</span> <br></br>
                 <TextareaAutosize 
                   minRows={10}
-                  onChange={(e) => setListCate({...listCate, case: e.target.value})}
+                  onChange={(e) => handleChange(e.target.value, 'case')}
                   value={listCate?.case}
                 />
             </div>
             <div>
-                <span>paymentMethod Method</span> <br></br>
+                <span>payment Method</span> <br></br>
                 <TextareaAutosize 
                   minRows={10}
-                  onChange={(e) => setListCate({...listCate, paymentMethod: e.target.value})}
+                  onChange={(e) => handleChange(e.target.value, 'paymentMethod')}
                   value={listCate?.paymentMethod}
                 />
             </div>
