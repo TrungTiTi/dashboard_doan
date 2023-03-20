@@ -2,7 +2,7 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Layout from './components/Layout/Layout';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Router, Routes } from 'react-router-dom';
 import AddEditCategory from './pages/AddEditCategory/AddEditCategory';
 import AddEditProduct from './pages/AddEditProduct/AddEditProduct';
 import AddEditListCate from './pages/AddEditListCate/AddEditListCate';

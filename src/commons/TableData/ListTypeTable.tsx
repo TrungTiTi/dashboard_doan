@@ -34,6 +34,9 @@ const ListTypeTable = (props: ICategory) => {
                 tabIndex={-1}
                 key={row.id}
                 selected={isItemSelected}
+                sx={{
+                    height: '100px'
+                }}
             >
                 <TableCell padding="checkbox">
                 <Checkbox
@@ -53,12 +56,12 @@ const ListTypeTable = (props: ICategory) => {
                 >
                 {row.name}
                 </TableCell>
-                <TableCell align="right">{row.cateId}</TableCell>
-                <TableCell align="right">{row.description}</TableCell>
-                <TableCell align="right">{row.condition}</TableCell>
-                <TableCell align="right">{row.case}</TableCell>
-                <TableCell align="right">{row.paymentMethod}</TableCell>
-                <TableCell align="right">{row.detailTitle}</TableCell>
+                <TableCell align="right" sx={{width: 100}}>{row.cateId}</TableCell>
+                <TableCell align="right" height='100px'>{row.description}</TableCell>
+                <TableCell align="right" height='100px'>{row.condition}</TableCell>
+                <TableCell align="right" height='100px'>{row.case}</TableCell>
+                <TableCell align="right" height='100px'>{row.paymentMethod}</TableCell>
+                <TableCell align="right" height='100px'>{row.detailTitle}</TableCell>
             </TableRow>
             <ListCateDialog
                 open={openEditDialog}
