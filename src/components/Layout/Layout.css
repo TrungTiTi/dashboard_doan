@@ -16,7 +16,6 @@
 .layout .layout-title .a-content {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 16px;
     text-decoration: none;
     color: #2D465E;
@@ -24,7 +23,12 @@
     border-radius: 12px;
 }
 
-.layout .layout-title .a-content:hover {
+.layout .layout-title .a-content:hover, .a-content:active, .a-content:focus, .a-content:target {
+    background-color: rgb(237, 231, 246);
+    color: rgb(94, 53, 177);
+}
+
+.layout .layout-title .a-content:active {
     background-color: rgb(237, 231, 246);
     color: rgb(94, 53, 177);
 }
