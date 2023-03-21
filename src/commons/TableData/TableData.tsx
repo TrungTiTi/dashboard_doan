@@ -1,4 +1,5 @@
 import * as React from 'react';
+import './TableData.css';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
@@ -20,7 +21,7 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import DialogModel from '../Dialog/Dialog';
 import ConfirmDialog from '../ConfirmDialog/ConfirmDialog';
-import { TYPE_TABLE } from '../Constant';
+import { TYPE_TABLE } from '../../Constant';
 import CategoryTable from './CategoryTable';
 import ProductTable from './ProductTable';
 import ListTypeTable from './ListTypeTable';

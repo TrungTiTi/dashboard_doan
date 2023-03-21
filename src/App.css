@@ -18,6 +18,7 @@
 .table-db-container {
   height: 100%;
   padding: 16px;
+  box-sizing: border-box;
 }
 
 .table-db-container .MuiPaper-root {

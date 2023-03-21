@@ -1,0 +1,8 @@
+table thead tr th {
+    background-color: #bbd1e2;
+}
+
+table tr th, td {
+    border: solid #e9ecef;
+    border-width: 1px;
+}

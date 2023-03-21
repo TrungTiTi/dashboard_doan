@@ -1,7 +1,7 @@
 import { Button } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import { TYPE_TABLE } from '../../commons/Constant';
+import { TYPE_TABLE } from '../../Constant';
 import DialogModel from '../../commons/Dialog/Dialog';
 import TableData from '../../commons/TableData/TableData';
 import { useCategoryStore } from '../../stores/Category';
@@ -72,8 +72,8 @@ const AddEditCategory = () => {
 
   return (
     <div className='table-dashboard'>
-      <Button onClick={() => setOpenDialog(true)}>Add</Button>
       <div className='table-db-container'>
+      <Button onClick={() => setOpenDialog(true)}>Add</Button>
         <TableData
           rows={categoryData || []}
           headCells={headCells}
