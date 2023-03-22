@@ -17,3 +17,10 @@ export enum NAV_CLASS_NAME {
 export interface ILayout {
     className: string;
 }
+
+export type FormValues= {
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+}

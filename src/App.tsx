@@ -7,6 +7,7 @@ import AddEditCategory from './pages/AddEditCategory/AddEditCategory';
 import AddEditProduct from './pages/AddEditProduct/AddEditProduct';
 import AddEditListCate from './pages/AddEditListCate/AddEditListCate';
 import SignIn from './pages/SignInAndSignUp/SignIn';
+import SignUp from './pages/SignInAndSignUp/SignUp';
 
 
 const Element = ({Children, className}: any) => {
@@ -26,6 +27,8 @@ function App() {
   return (
     <Routes>
       <Route path='' element={<SignIn />}>
+      </Route>
+      <Route path='/sign-up' element={<SignUp />}>
       </Route>
       <Route path='/type' element={<Element Children={<AddEditCategory />} className={"nav-cate"}/>} />
       <Route path='/product' element={<Element Children={<AddEditProduct />} className={"nav-product"} />} />
