@@ -10,7 +10,7 @@ import './ConfirmDialog.css';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../firebase';
-import { TYPE_TABLE } from '../Constant';
+import { TYPE_TABLE } from '../../Constant';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {

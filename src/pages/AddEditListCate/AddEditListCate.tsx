@@ -1,7 +1,7 @@
 import { Button } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import { TYPE_TABLE } from '../../commons/Constant';
+import { TYPE_TABLE } from '../../Constant';
 import ListCateDialog from '../../commons/Dialog/ListCateDialog/ListCateDialog';
 import TableData from '../../commons/TableData/TableData';
 import { useListCateStore } from '../../stores/ListCateStore';
@@ -84,11 +84,11 @@ const AddEditListCate = () => {
   React.useEffect(() => {
     setListCate(listCateStore.listCateData);
   }, [listCateStore.listCateData]);
-console.log('55555', listCateStore.listCateData)
+
   return (
     <div className='table-dashboard'>
-      <Button onClick={() => setOpenDialog(true)}>Add</Button>
       <div className='table-db-container'>
+      <Button onClick={() => setOpenDialog(true)}>Add</Button>
         <TableData
           rows={listCateStore.listCateData || []}
           headCells={headCells}

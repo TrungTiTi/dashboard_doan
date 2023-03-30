@@ -1,6 +1,8 @@
 .layout {
     height: 100vh;
     width: 24%;
+    background: #004F9B;
+
 }
 
 .layout-title .layout-title-header{
@@ -9,8 +11,13 @@
     justify-content: center;
 }
 
+.layout-title .layout-title-header h3 {
+    color: #FFFFFF;
+}
+
 .layout .layout-title .dashboard-content {
     padding: 0 16px;
+    margin-bottom: 8px;
 }
 
 .layout .layout-title .a-content {
@@ -21,14 +28,13 @@
     color: #2D465E;
     padding: 10px 16px 10px 24px;
     border-radius: 12px;
+    color: #FFFFFF;
 }
 
-.layout .layout-title .a-content:hover, .a-content:active, .a-content:focus, .a-content:target {
-    background-color: rgb(237, 231, 246);
-    color: rgb(94, 53, 177);
+.layout .layout-title .a-content:hover {
+    background-color: #165EA4;
 }
 
-.layout .layout-title .a-content:active {
-    background-color: rgb(237, 231, 246);
-    color: rgb(94, 53, 177);
+.layout .layout-title .a-content.nav-cate, .a-content.nav-product, .a-content.nav-list-cate{
+    background-color: #013F73 !important;
 }

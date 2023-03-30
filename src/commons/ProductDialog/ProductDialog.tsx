@@ -18,6 +18,7 @@ import _, { cloneDeep } from 'lodash';
 import { useListCateStore } from '../../stores/ListCateStore';
 import { useCategoryStore } from '../../stores/Category';
 import { observer } from 'mobx-react-lite';
+import { useProductStore } from '../../stores/Product';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -71,6 +72,7 @@ const ProductDialog: React.FC<IDialog> = (props) => {
   const [imgArr, setImgArr] = React.useState<any>([]);
   const listCateStore = useListCateStore();
   const categoryStore = useCategoryStore();
+  const productStore = useProductStore();
 
   const handleClose = () => {
     setOpen(false);
@@ -79,7 +81,6 @@ const ProductDialog: React.FC<IDialog> = (props) => {
   };
 
   React.useEffect(() => {
-    console.log('111111')
     categoryStore.getCates();
     listCateStore.getListCates();
   }, [])
@@ -148,11 +149,12 @@ const ProductDialog: React.FC<IDialog> = (props) => {
     }
   }
 
-  const handleAddType = async () => {
+  const handleAddProduct = async () => {
     setLoading(true);
+    let res = null;
     try {
       if (isEdit && data.image === product.image) {
-        await updateDoc(doc(db, "product", data.id), {
+        res = await updateDoc(doc(db, "product", data.id), {
             name: product.name,
             price: product?.price,
             cateId: product.cateId,
@@ -167,23 +169,26 @@ const ProductDialog: React.FC<IDialog> = (props) => {
               getDownloadURL(uploadTask.snapshot.ref)
               .then(async(url) => {
                 if (isEdit) {
-                  await updateDoc(doc(db, "product", data.id), handlePutProduct(product, url))
+                  res = await updateDoc(doc(db, "product", data.id), handlePutProduct(product, url))
                 } else {
-                  await addDoc(collection(db, "product"), handlePutProduct(product, url))
+                  res = await addDoc(collection(db, "product"), handlePutProduct(product, url))
                 }
               })
             }
           );
         })
 
-      // }
+        
       }
     } catch (error) {
       
     }
     setLoading(false);
-    // setOpen(false);
-    console.log('product.listCateId', product.listCateId)
+    setOpen(false);
+    if (res) {
+      productStore.getProducts();
+    }
+    onResetData();
   };
 
   const onCheckForm = () => {
@@ -300,7 +305,7 @@ console.log('select', listCateSelect)
         {loading ? <CircularProgress color="secondary" /> :
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
-            <Button onClick={handleAddType} disabled={onCheckForm()}>Save</Button>
+            <Button onClick={handleAddProduct} disabled={onCheckForm()}>Save</Button>
           </DialogActions>
         }
         

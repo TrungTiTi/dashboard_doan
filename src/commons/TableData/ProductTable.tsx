@@ -54,7 +54,7 @@ const ProductTable = (props: ICategory) => {
                 >
                 {row?.name}
                 </TableCell>
-                <TableCell align="right">{row?.title}</TableCell>
+                {/* <TableCell align="right">{row?.title}</TableCell> */}
                 {
                 row?.imageContent &&
                 <TableCell align="right">
@@ -67,7 +67,7 @@ const ProductTable = (props: ICategory) => {
                          <img style={{width: 50, height: 50}} src={row.image} />
                     </TableCell>
                 }
-                <TableCell align="right">{row?.title}</TableCell>
+                {/* <TableCell align="right">{row?.title}</TableCell> */}
                 <TableCell align="right">{row?.price}</TableCell>
                 <TableCell align="right">{row?.cateId}</TableCell>
                 <TableCell align="right">{row?.listCateId}</TableCell>

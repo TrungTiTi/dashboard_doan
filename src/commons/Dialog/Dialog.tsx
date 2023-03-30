@@ -16,7 +16,7 @@ import { CircularProgress } from '@mui/material';
 import CancelIcon from '@mui/icons-material/Cancel';
 import _ from 'lodash';
 import { useCategoryStore } from '../../stores/Category';
-import { TEXT_ERROR } from '../Constant';
+import { TEXT_ERROR } from '../../Constant';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {

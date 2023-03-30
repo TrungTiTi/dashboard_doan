@@ -1,7 +1,7 @@
 import { Button } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
-import { TYPE_TABLE } from '../../commons/Constant';
+import { TYPE_TABLE } from '../../Constant';
 import DialogModel from '../../commons/Dialog/Dialog';
 import ProductDialog from '../../commons/ProductDialog/ProductDialog';
 import TableData from '../../commons/TableData/TableData';
@@ -37,22 +37,34 @@ const AddEditProduct = () => {
           label: 'Name',
         },
         {
-          id: 'title',
-          numeric: true,
-          disablePadding: false,
-          label: 'Title',
-        },
-        {
           id: 'image',
           numeric: true,
           disablePadding: false,
           label: 'Image',
         },
         {
+          id: 'price',
+          numeric: true,
+          disablePadding: false,
+          label: 'Price',
+        },
+        {
+          id: 'cateId',
+          numeric: true,
+          disablePadding: false,
+          label: 'Cate Id',
+        },
+        {
+          id: 'listCateId',
+          numeric: true,
+          disablePadding: false,
+          label: 'List Cate Id',
+        },
+        {
           id: 'id',
           numeric: true,
           disablePadding: false,
-          label: 'Id',
+          label: 'ID',
         },
       ]      
   
@@ -64,18 +76,16 @@ const AddEditProduct = () => {
 
   React.useEffect(() => {
     productStore.getProducts();
-  }, [openDialog]);
+  }, [openDialog, loading]);
 
   React.useEffect(() => {
     setProductData(productStore.productData);
   }, [productStore.productData]);
 
-  console.log('productData', productData)
-
   return (
     <div className='table-dashboard'>
-      <Button onClick={() => setOpenDialog(true)}>Add</Button>
       <div className='table-db-container'>
+      <Button onClick={() => setOpenDialog(true)}>Add</Button>
         <TableData
           rows={productData || []}
           headCells={headCells}
