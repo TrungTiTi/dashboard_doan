@@ -12,32 +12,71 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import * as yup from "yup";
+import { useForm } from 'react-hook-form';
+import { yupResolver } from "@hookform/resolvers/yup";
+import { FormValues } from '../../Constant';
+import { auth, signInWithEmailAndPassword } from '../../firebase';
+import { useNavigate } from 'react-router-dom';
+import { useUserStore } from '../../stores/UserStore';
+import { observer } from 'mobx-react-lite';
 
 function Copyright(props: any) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
+     
     </Typography>
   );
 }
 
+const schemaSignUp = yup.object().shape({
+  email: yup.string().required("Please fill out this field!")
+            .matches(
+              /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+              "Please enter the correct format!"
+            ),
+  password: yup
+    .string()
+    .required("Please fill out this field!")
+    .matches(
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+      "Mật khẩu phải có 8 ký tự trở lên, 1 số, 1 chữ in hoa, 1 ký tự đặc biệt!"
+    ),
+});
+
 const theme = createTheme();
 
-export default function SignIn() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
+const SignIn = () => {
+  const navigate = useNavigate();
+  const userStore = useUserStore();
 
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<FormValues>({
+    resolver: yupResolver(schemaSignUp),
+  });
+
+  const onSubmit = async(data: FormValues) => {
+    localStorage.clear();
+    try {
+        const userOb:any = await signInWithEmailAndPassword(
+          auth,
+          `${data.email}`,
+          `${data.password}`
+        );
+        if (userOb?.user?.uid) {
+          localStorage.setItem('user', JSON.stringify(userOb.user));
+          userStore.getUser(userOb.user.uid);
+          navigate('/type');
+        }
+       
+    }catch (error) {
+    console.log(error); 
+    }
+  }
+console.log('uuu', userStore.currentUser)
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -56,25 +95,29 @@ export default function SignIn() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
               fullWidth
               id="email"
               label="Email Address"
-              name="email"
               autoComplete="email"
               autoFocus
+              {...register("email")}
+              error={!!errors?.email}
+              helperText={errors?.email?.message}
             />
             <TextField
               margin="normal"
               required
               fullWidth
-              name="password"
               label="Password"
               type="password"
               id="password"
+              {...register("password")}
+              error={!!errors?.password}
+              helperText={errors?.password?.message}
               autoComplete="current-password"
             />
             <FormControlLabel
@@ -108,3 +151,5 @@ export default function SignIn() {
     </ThemeProvider>
   );
 }
+
+export default observer(SignIn);

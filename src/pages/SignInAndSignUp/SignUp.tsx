@@ -71,7 +71,8 @@ export default function SignUp() {
             firstName: data.firstName,
             lastName: data.lastName,
             email: data.email,
-            role: 'admin'
+            role: 'user',
+            isPermission: false
         })
       }
       console.log("successfull");

@@ -6,6 +6,7 @@ import DialogModel from '../../commons/Dialog/Dialog';
 import TableData from '../../commons/TableData/TableData';
 import { useCategoryStore } from '../../stores/Category';
 import './AddEditCategory.css';
+import { useUserStore } from '../../stores/UserStore';
 
 interface Data {
   name: string,
@@ -61,6 +62,11 @@ const AddEditCategory = () => {
   ]      
 
   const categoryStore= useCategoryStore();
+  const userStore = useUserStore();
+
+  React.useEffect(() => {
+    userStore.getListUser();
+  }, [])
 
   React.useEffect(() => {
     categoryStore.getCates();
@@ -68,7 +74,9 @@ const AddEditCategory = () => {
 
   React.useEffect(() => {
     setCategoryData(categoryStore.categoryData);
-  }, [categoryStore.categoryData]);
+    
+  }, [categoryStore.categoryData.length, openDialog]);
+  console.log('1111111',userStore.currentUser, userStore.userListData);
 
   return (
     <div className='table-dashboard'>

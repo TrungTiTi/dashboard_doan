@@ -11,7 +11,8 @@ export enum TEXT_ERROR {
 export enum NAV_CLASS_NAME {
     CATEGORY = 'nav-cate',
     PRODUCT = 'nav-product',
-    LISTCATE= 'nav-list-cate'
+    LISTCATE= 'nav-list-cate',
+    USER = 'user'
 }
 
 export interface ILayout {
@@ -19,8 +20,8 @@ export interface ILayout {
 }
 
 export type FormValues= {
-    firstName: string,
-    lastName: string,
+    firstName?: string,
+    lastName?: string,
     email: string,
     password: string,
 }
