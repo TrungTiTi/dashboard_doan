@@ -2,7 +2,9 @@
     height: 100vh;
     width: 24%;
     background: #004F9B;
-
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
 }
 
 .layout-title .layout-title-header{
@@ -37,4 +39,9 @@
 
 .layout .layout-title .a-content.nav-cate, .a-content.nav-product, .a-content.nav-list-cate{
     background-color: #013F73 !important;
+}
+
+.layout .layout-footer span {
+    font-size: 18px;
+    font-weight: 600;
 }

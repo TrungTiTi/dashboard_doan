@@ -4,6 +4,7 @@ import './Layout.css';
 import CategoryIcon from '@mui/icons-material/Category';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import BallotIcon from '@mui/icons-material/Ballot';
+import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt';
 import { ILayout, NAV_CLASS_NAME } from '../../Constant';
 
 const listLayout = [
@@ -24,6 +25,12 @@ const listLayout = [
         label: 'List Category',
         icon: <BallotIcon />,
         className: NAV_CLASS_NAME.LISTCATE
+    },
+    {
+        link: '/user',
+        label: 'User',
+        icon: <BallotIcon />,
+        className: NAV_CLASS_NAME.USER
     },
 ];
 
@@ -59,6 +66,14 @@ const Layout: React.FC<ILayout> = (props) => {
                         );
                     })
                 }
+            </div>
+            <div className='layout-footer layout-title'>
+                <div className={'dashboard-content'}>
+                    <a href='/' className='a-content'>
+                        <SystemUpdateAltIcon />
+                        <span>LOG OUT</span>
+                    </a>
+                </div>
             </div>
         </div>
     )

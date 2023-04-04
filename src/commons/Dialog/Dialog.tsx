@@ -17,6 +17,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import _ from 'lodash';
 import { useCategoryStore } from '../../stores/Category';
 import { TEXT_ERROR } from '../../Constant';
+import { useNavigate } from 'react-router-dom';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -55,6 +56,7 @@ const DialogModel: React.FC<IDialog> = (props) => {
         isEdit,
         data
     } = props;
+    const navigate = useNavigate();
   const [imagePreview, setImagePreview] = React.useState<any>(null);
   // const [preview, setPreview] = React.useState<any>();
   // const [categoryTitle, setCategoryTitle] = React.useState<string>('');
@@ -130,10 +132,11 @@ const DialogModel: React.FC<IDialog> = (props) => {
     setLoading(true);
     try {
       if (isEdit && data.image === category.image) {
-        await updateDoc(doc(db, "category", data.id), {
+        const newType: any = await updateDoc(doc(db, "category", data.id), {
           name: category.name,
           title: category.title,
         })
+        
       } else {
       const storageRef = ref(storage, `Files/${imagePreview.name}`)
             const uploadTask = uploadBytesResumable(storageRef, imagePreview)
@@ -144,7 +147,7 @@ const DialogModel: React.FC<IDialog> = (props) => {
             console.log('prog', prog)
         }, (err) => {}, () => {
             getDownloadURL(uploadTask.snapshot.ref).then(async(url) => {
-              const newFood = isEdit ? await updateDoc(doc(db, "category", data.id), {
+              const newType = isEdit ? await updateDoc(doc(db, "category", data.id), {
                     name: category.name,
                     title: category.title,
                     image: url
@@ -153,18 +156,25 @@ const DialogModel: React.FC<IDialog> = (props) => {
                   title: category.title,
                   image: url
               })
+              if (newType) {
+                window.location.reload()
+              }
+            });
 
-            })
           }
         );
       }
+      
     } catch (error) {
       
+    }
+    if (isEdit) {
+      window.location.reload()
     }
     setLoading(false);
     setOpen(false);
     onResetData();
-
+    
   };
 
   const onCheckForm = () => {

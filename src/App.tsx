@@ -7,6 +7,9 @@ import AddEditCategory from './pages/AddEditCategory/AddEditCategory';
 import AddEditProduct from './pages/AddEditProduct/AddEditProduct';
 import AddEditListCate from './pages/AddEditListCate/AddEditListCate';
 import SignIn from './pages/SignInAndSignUp/SignIn';
+import SignUp from './pages/SignInAndSignUp/SignUp';
+import PrivateRoute from './routes/PrivateRoute';
+import UserTable from './pages/User/User';
 
 
 const Element = ({Children, className}: any) => {
@@ -27,9 +30,33 @@ function App() {
     <Routes>
       <Route path='' element={<SignIn />}>
       </Route>
-      <Route path='/type' element={<Element Children={<AddEditCategory />} className={"nav-cate"}/>} />
-      <Route path='/product' element={<Element Children={<AddEditProduct />} className={"nav-product"} />} />
-      <Route path='/list-cate' element={<Element Children={<AddEditListCate />} className={"nav-list-cate"} />} />
+      <Route path='/sign-up' element={<SignUp />}>
+      </Route>
+      <Route 
+        path='/type' 
+        element={
+          <PrivateRoute>
+            <Element Children={<AddEditCategory />} className={"nav-cate"}/>
+          </PrivateRoute>
+        }
+      />
+      <Route path='/product' element={
+        <PrivateRoute>
+          <Element Children={<AddEditProduct />} className={"nav-product"} />
+        </PrivateRoute>
+      } />
+      <Route path='/list-cate' element={
+        <PrivateRoute>
+          <Element Children={<AddEditListCate />} className={"nav-list-cate"} />
+        </PrivateRoute>
+      }
+
+      />
+      <Route path='/user' element={
+        <PrivateRoute>
+          <Element Children={<UserTable />} className={"nav-user"} />
+        </PrivateRoute>
+      } />
     </Routes>
   );
 }
