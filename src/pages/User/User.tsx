@@ -222,12 +222,20 @@ const UserTable = () => {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows, setRows] = React.useState<any[]>([]);
   const userStore = useUserStore();
+  const userStorage = JSON.parse(localStorage.getItem('user') || "");
 
   console.log('userStore', userStore.userListData);
+  console.log('userStorage', userStorage);
 
   React.useEffect(() => {
-    
-  }, [])
+    if(userStorage?.uid) {
+      userStore.getUser(userStorage.uid);
+    }
+  }, [userStorage?.uid]);
+
+  React.useEffect(() => {
+    userStore.getListUser();
+  }, [userStore.currentUser?.id])
 
   React.useEffect(() => {
     if (userStore.userListData.length) {
