@@ -47,6 +47,7 @@ interface IProduct {
   price?: number;
   cateId?: string;
   listCateId?: string;
+  youtubeLink?: string;
 }
 
 const ProductDialog: React.FC<IDialog> = (props) => {
@@ -66,7 +67,8 @@ const ProductDialog: React.FC<IDialog> = (props) => {
     name: '',
     price: 0,
     listCateId: '',
-    cateId: ''
+    cateId: '',
+    youtubeLink: ''
   });
   const [listCateSelect, setListCateSelect] = React.useState<any[]>([]);
   const [imgArr, setImgArr] = React.useState<any>([]);
@@ -100,7 +102,8 @@ const ProductDialog: React.FC<IDialog> = (props) => {
         price: value?.price,
         image: [value?.image],
         name: value?.name,
-        id: value?.id
+        id: value?.id,
+        youtubeLink: value?.youtubeLink || ''
     });
     if (cateIdWhenEdit) {
       const listCateR: any[] = listCateStore.listCateData.filter((item) => item.cateId === cateIdWhenEdit);
@@ -145,7 +148,8 @@ const ProductDialog: React.FC<IDialog> = (props) => {
       price: item?.price,
       image: [url],
       cateId: item.cateId,
-      listCateId: item.listCateId
+      listCateId: item.listCateId,
+      youtubeLink: item?.youtubeLink || ''
     }
   }
 
@@ -158,7 +162,8 @@ const ProductDialog: React.FC<IDialog> = (props) => {
             name: product.name,
             price: product?.price,
             cateId: product.cateId,
-            listCateId: product.listCateId
+            listCateId: product.listCateId,
+            youtubeLink: product?.youtubeLink || ''
         })
       } else {
         imagePreview.map((image: any) => {
@@ -203,7 +208,7 @@ const ProductDialog: React.FC<IDialog> = (props) => {
   };
 
   const onResetData = () => {
-    setProduct({...product, name: '', listCateId: '', cateId: '', })
+    setProduct({...product, name: '', listCateId: '', cateId: '', youtubeLink: '' })
     setImagePreview(null);
     setImgArr([]);
   }
@@ -300,7 +305,16 @@ console.log('select', listCateSelect)
                 <span>Price</span> <br></br>
                 <TextField id="outlined-basic" type={'number'} onChange={(e) => setProduct({...product, price: +(e.target.value)})} value={product?.price} />
             </div>
+            <div>
+                <span>Video Link</span> <br></br>
+                <TextField id="outlined-basic" type={'text'} onChange={(e) => setProduct({...product, youtubeLink: e.target.value})} value={product?.youtubeLink} />
+            </div>
+            {
+              product.youtubeLink &&
+              <iframe width={220} height={220} src={product.youtubeLink}></iframe>
+            }
           </div>
+
         </DialogContent>
         {loading ? <CircularProgress color="secondary" /> :
           <DialogActions>

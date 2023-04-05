@@ -10,6 +10,8 @@ import SignIn from './pages/SignInAndSignUp/SignIn';
 import SignUp from './pages/SignInAndSignUp/SignUp';
 import PrivateRoute from './routes/PrivateRoute';
 import UserTable from './pages/User/User';
+import OrderTable from './commons/TableData/OrderTable';
+import OrderManagement from './pages/OrderManagement/OrderManagement';
 
 
 const Element = ({Children, className}: any) => {
@@ -55,6 +57,11 @@ function App() {
       <Route path='/user' element={
         <PrivateRoute>
           <Element Children={<UserTable />} className={"nav-user"} />
+        </PrivateRoute>
+      } />
+      <Route path='/order' element={
+        <PrivateRoute>
+          <Element Children={<OrderManagement />} className={"nav-order"} />
         </PrivateRoute>
       } />
     </Routes>

@@ -1,6 +1,7 @@
 import { Checkbox, TableCell, TableRow } from '@mui/material';
 import * as React from 'react';
 import ProductDialog from '../ProductDialog/ProductDialog';
+import { useUserStore } from '../../stores/UserStore';
 
 interface ICategory {
     row: any;
@@ -19,17 +20,25 @@ const ProductTable = (props: ICategory) => {
     } = props;
 
     const [openEditDialog, setOpenEditDialog] = React.useState<boolean>(false);
+    const userStore = useUserStore();
 
     const handleShowEditDialog = () => {
-        setOpenEditDialog(true);
+        if (userStore.currentUser?.isPermission) {
+            setOpenEditDialog(true);
+        }
     };
-    console.log('row', row)
+
+    const handleClickRow = (event: any) => {
+        if (userStore.currentUser?.isPermission) {
+            handleClick(event, row.id)
+        }
+    }
     
     return (
         <>
             <TableRow
                 hover
-                onClick={(event) => handleClick(event, row.id)}
+                onClick={(event) => handleClickRow(event)}
                 role="checkbox"
                 aria-checked={isItemSelected}
                 tabIndex={-1}
@@ -71,7 +80,12 @@ const ProductTable = (props: ICategory) => {
                 <TableCell align="right">{row?.price}</TableCell>
                 <TableCell align="right">{row?.cateId}</TableCell>
                 <TableCell align="right">{row?.listCateId}</TableCell>
-                <TableCell align="right">{row?.id}</TableCell>
+                <TableCell align="right">
+                    {
+                        row?.youtubeLink &&
+                        <iframe width={200} height={100} src={row?.youtubeLink}></iframe>
+                    }
+                </TableCell>
             </TableRow>
             <ProductDialog
                 open={openEditDialog}

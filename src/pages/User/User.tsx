@@ -22,6 +22,8 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import { useUserStore } from '../../stores/UserStore';
 import { observer } from 'mobx-react-lite';
+import UserDialog from '../../commons/Dialog/UserDialog/UserDialog';
+import { getDatabase, ref, onValue} from "firebase/database";
 
 interface Data {
   email: string,
@@ -223,9 +225,29 @@ const UserTable = () => {
   const [rows, setRows] = React.useState<any[]>([]);
   const userStore = useUserStore();
   const userStorage = JSON.parse(localStorage.getItem('user') || "");
+  const [openDialog, setOpenDialog] = React.useState<boolean>(false);
+  const [loading, setLoading] = React.useState<boolean>(false);
+  // const [userlist, setUserList] = React.useState<any[]>([]);
 
-  console.log('userStore', userStore.userListData);
+  const [dataDialog, setDataDialog] = React.useState({});
+  console.log('testtttttttttt', userStore.test);
   console.log('userStorage', userStorage);
+  React.useEffect(() => {
+    if (userStorage?.uid) {
+      const db = getDatabase();
+      const starCountRef = ref(db, 'users/');
+      onValue(starCountRef, (snapshot) => {
+        setRows([]);
+        const data = snapshot.val();
+        if (data !== null) {
+          console.log('data', data)
+          Object.values(data).map((todo) => {
+            setRows((oldArray: any) => [...oldArray, todo]);
+          });
+        }
+      });
+    }
+  }, [])
 
   React.useEffect(() => {
     if(userStorage?.uid) {
@@ -239,7 +261,8 @@ const UserTable = () => {
 
   React.useEffect(() => {
     if (userStore.userListData.length) {
-      setRows(userStore.userListData);
+      // setRows(userStore.userListData);
+
     }
   }, [userStore.userListData.length]);
 
@@ -299,7 +322,7 @@ const UserTable = () => {
   return (
     <Box sx={{ width: '100%' }}>
       {
-        userStore.currentUser ? (
+        userStore.currentUser?.role === 'admin' ? (
           <Paper sx={{ width: '100%', mb: 2 }}>
             <EnhancedTableToolbar numSelected={selected.length} />
             <TableContainer>
@@ -347,11 +370,13 @@ const UserTable = () => {
                             id={labelId}
                             scope="row"
                             padding="none"
+                            onClick={() => {setOpenDialog(true); setDataDialog(row)}}
                           >
                             {row?.email}
                           </TableCell>
                           <TableCell align="right">{row?.role}</TableCell>
                           <TableCell align="right">{row?.isPermission ? 'true' : 'false'}</TableCell>
+                          
                         </TableRow>
                       );
                     })}
@@ -376,6 +401,13 @@ const UserTable = () => {
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
+            <UserDialog
+              open={openDialog}
+              setOpen={setOpenDialog}
+              loading={loading}
+              setLoading={setLoading}
+              data={dataDialog}
+            ></UserDialog>
           </Paper>
         ) : <p>NO PERMISSION</p>
       }

@@ -18,6 +18,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { FormValues } from '../../Constant';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
+import { getDatabase, ref, set } from "firebase/database";
 import { auth, db } from '../../firebase';
 import { useNavigate } from 'react-router-dom';
 
@@ -73,10 +74,18 @@ export default function SignUp() {
             email: data.email,
             role: 'user',
             isPermission: false
-        })
+        });
+        const db = getDatabase();
+        set(ref(db, 'users/' + user.user.uid), {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          role: 'user',
+          isPermission: false
+        });
       }
       console.log("successfull");
-      navigate('/');
+      // navigate('/');
     } catch (error) {
       console.log(error);
     }

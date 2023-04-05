@@ -1,6 +1,7 @@
 import { Checkbox, TableCell, TableRow } from '@mui/material';
 import * as React from 'react';
 import ListCateDialog from '../Dialog/ListCateDialog/ListCateDialog';
+import { useUserStore } from '../../stores/UserStore';
 
 interface ICategory {
     row: any;
@@ -19,16 +20,25 @@ const ListTypeTable = (props: ICategory) => {
     } = props;
 
     const [openEditDialog, setOpenEditDialog] = React.useState<boolean>(false);
+    const userStore = useUserStore();
 
     const handleShowEditDialog = () => {
-        setOpenEditDialog(true);
+        if (userStore.currentUser?.isPermission) {
+            setOpenEditDialog(true);
+        }
     };
+
+    const handleClickRow = (event: any) => {
+        if (userStore.currentUser?.isPermission) {
+            handleClick(event, row.id)
+        }
+    }
 
     return (
         <>
             <TableRow
                 hover
-                onClick={(event) => handleClick(event, row.id)}
+                onClick={(event) => handleClickRow(event)}
                 role="checkbox"
                 aria-checked={isItemSelected}
                 tabIndex={-1}
@@ -56,7 +66,7 @@ const ListTypeTable = (props: ICategory) => {
                 >
                 {row.name}
                 </TableCell>
-                <TableCell align="right" sx={{width: 100}}>{row.cateId}</TableCell>
+                {/* <TableCell align="right" sx={{width: 100}}>{row.cateId}</TableCell> */}
                 <TableCell align="right" height='100px'>{row.description}</TableCell>
                 <TableCell align="right" height='100px'>{row.condition}</TableCell>
                 <TableCell align="right" height='100px'>{row.case}</TableCell>

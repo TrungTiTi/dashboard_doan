@@ -6,6 +6,7 @@ import ListCateDialog from '../../commons/Dialog/ListCateDialog/ListCateDialog';
 import TableData from '../../commons/TableData/TableData';
 import { useListCateStore } from '../../stores/ListCateStore';
 import './AddEditListCate.css';
+import { useUserStore } from '../../stores/UserStore';
 
 interface Data {
   name: string,
@@ -38,12 +39,6 @@ const AddEditListCate = () => {
       label: 'Name',
     },
     {
-      id: 'cateId',
-      numeric: true,
-      disablePadding: false,
-      label: 'Cate Id',
-    },
-    {
       id: 'description',
       numeric: true,
       disablePadding: false,
@@ -73,9 +68,11 @@ const AddEditListCate = () => {
       disablePadding: false,
       label: 'detailTitle',
     },
+    
   ]      
 
   const listCateStore= useListCateStore();
+  const userStore = useUserStore();
 
   React.useEffect(() => {
     listCateStore.getListCates();
@@ -88,7 +85,7 @@ const AddEditListCate = () => {
   return (
     <div className='table-dashboard'>
       <div className='table-db-container'>
-      <Button onClick={() => setOpenDialog(true)}>Add</Button>
+      <Button onClick={() => setOpenDialog(true)} disabled={!userStore.currentUser?.isPermission}>Add</Button>
         <TableData
           rows={listCateStore.listCateData || []}
           headCells={headCells}

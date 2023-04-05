@@ -7,6 +7,7 @@ import ProductDialog from '../../commons/ProductDialog/ProductDialog';
 import TableData from '../../commons/TableData/TableData';
 import { useProductStore } from '../../stores/Product';
 import { useUserStore } from '../../stores/UserStore';
+import { useOrderStore } from '../../stores/OrderStore';
 
 interface Data {
   name: string,
@@ -29,19 +30,19 @@ function createData(
   };
 }
 
-const AddEditProduct = () => {
+const OrderManagement = () => {
     const headCells: any[] = [
         {
-          id: 'name',
+          id: 'ownName',
           numeric: false,
           disablePadding: true,
-          label: 'Name',
+          label: 'ownName',
         },
         {
-          id: 'image',
+          id: 'address',
           numeric: true,
           disablePadding: false,
-          label: 'Image',
+          label: 'Address',
         },
         {
           id: 'price',
@@ -50,62 +51,55 @@ const AddEditProduct = () => {
           label: 'Price',
         },
         {
-          id: 'cateId',
+          id: 'email',
           numeric: true,
           disablePadding: false,
-          label: 'Cate Id',
+          label: 'Email',
         },
         {
-          id: 'listCateId',
+          id: 'licensePlate',
           numeric: true,
           disablePadding: false,
-          label: 'List Cate Id',
+          label: 'License Plate',
         },
         {
-          id: 'youtube',
+          id: 'type',
           numeric: true,
           disablePadding: false,
-          label: 'Youtube Link',
+          label: 'Type',
         },
       ]      
   
   const [openDialog, setOpenDialog] = React.useState<boolean>(false);
-  const productStore= useProductStore();
-  const [productData, setProductData] = React.useState<any>([]);
+  const orderStore= useOrderStore();
+  const [order, setOrder] = React.useState<any>([]);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [isEdit, setIsEdit] = React.useState<boolean>(false);
   const userStore = useUserStore();
 
   React.useEffect(() => {
-    productStore.getProducts();
+    orderStore.getOrders();
   }, [openDialog, loading]);
 
   React.useEffect(() => {
-    setProductData(productStore.productData);
-  }, [productStore.productData]);
+    console.log('123', orderStore.orderData)
+    setOrder(orderStore.orderData);
+  }, [orderStore.orderData]);
 
   return (
     <div className='table-dashboard'>
       <div className='table-db-container'>
-      <Button onClick={() => setOpenDialog(true)} disabled={!userStore.currentUser?.isPermission}>Add</Button>
         <TableData
-          rows={productData || []}
+          rows={order || []}
           headCells={headCells}
           setIsEdit={setIsEdit}
-          typeTable={TYPE_TABLE.PRODUCT}
+          typeTable={TYPE_TABLE.ORDER_MANAGEMENT}
         >
         </TableData>
       </div>
-      <ProductDialog
-        open={openDialog}
-        setOpen={setOpenDialog}
-        setLoading={setLoading}
-        loading={loading}
-        isEdit={isEdit}
-      >
-      </ProductDialog>
+      
     </div>
   );
 }
 
-export default observer(AddEditProduct);
+export default observer(OrderManagement);

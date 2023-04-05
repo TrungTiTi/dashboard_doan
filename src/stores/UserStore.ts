@@ -15,6 +15,8 @@ export class UserStore {
     loading = true;
     userListData: any[] = [];
     currentUser: any = {};
+    test: any = [];
+
     constructor() {
         makeAutoObservable(this);
     }
@@ -45,6 +47,12 @@ export class UserStore {
             return false;
         }
     }
+
+    resetData = () => {
+        this.currentUser = {};
+        this.userListData = [];
+    }
+
 }
 
 export const userStore = new UserStore();

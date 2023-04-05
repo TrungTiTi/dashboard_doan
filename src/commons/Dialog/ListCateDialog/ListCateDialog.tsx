@@ -121,7 +121,7 @@ const ListCateDialog: React.FC<IDialog> = (props) => {
     if (listCateStore.listCateData.length && listCate.name) {
       const listCateFound: any = listCateStore.listCateData.filter((item) => item.cateId === listCate.cateId);
       console.log('listCateFound', listCateFound)
-      if (listCateFound[0].name.toUpperCase() === listCate.name.toUpperCase()) {
+      if (listCateFound[0]?.name.toUpperCase() === listCate.name.toUpperCase()) {
         setIsNameExist(true);
         return;
       }

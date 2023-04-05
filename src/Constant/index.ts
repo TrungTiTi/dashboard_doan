@@ -1,7 +1,8 @@
 export enum TYPE_TABLE {
     CATEGORY = 'category',
     PRODUCT = 'product',
-    LISTCATE = 'listCate'
+    LISTCATE = 'listCate',
+    ORDER_MANAGEMENT = 'orderManagement'
 }
 
 export enum TEXT_ERROR {
@@ -12,7 +13,8 @@ export enum NAV_CLASS_NAME {
     CATEGORY = 'nav-cate',
     PRODUCT = 'nav-product',
     LISTCATE= 'nav-list-cate',
-    USER = 'user'
+    USER = 'user',
+    ORDER = 'order'
 }
 
 export interface ILayout {
