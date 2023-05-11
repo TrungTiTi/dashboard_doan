@@ -13,15 +13,10 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-// import './Dialog.css';
 import { collection, getDocs, doc, setDoc, deleteDoc, updateDoc, addDoc, getDoc, query, where, limit } from 'firebase/firestore';
-import { getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 import { db, storage } from '../../../firebase';
 import { CircularProgress } from '@mui/material';
-import CancelIcon from '@mui/icons-material/Cancel';
 import _ from 'lodash';
-import { TEXT_ERROR } from '../../Constant';
-import { useNavigate } from 'react-router-dom';
 import { getDatabase, set, update , ref} from 'firebase/database';
 
 const Transition = React.forwardRef(function Transition(
@@ -53,7 +48,6 @@ const UserDialog: React.FC<IDialog> = (props) => {
         isEdit,
         data
     } = props;
-    console.log('89979797979', data);
 
   const [isPermissionChoose, setIsPermissionChoose] = React.useState<boolean>(false);
   React.useEffect(() => {
@@ -82,7 +76,6 @@ const UserDialog: React.FC<IDialog> = (props) => {
         await update(ref(dbF, 'users/' + data.id), {
           isPermission: isPermissionChoose
         });
-        console.log('88484848')
       
     } catch (error) {
       console.log('err', error)
@@ -122,7 +115,7 @@ const UserDialog: React.FC<IDialog> = (props) => {
         <DialogTitle>{"Update Role User"}</DialogTitle>
         <DialogContent className='dialog-content'>
             <FormControl>
-                <FormLabel id="demo-controlled-radio-buttons-group">Gender</FormLabel>
+                <FormLabel id="demo-controlled-radio-buttons-group">ROLE</FormLabel>
                 <RadioGroup
                     aria-labelledby="demo-controlled-radio-buttons-group"
                     name="controlled-radio-buttons-group"

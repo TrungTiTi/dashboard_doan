@@ -120,7 +120,6 @@ const ListCateDialog: React.FC<IDialog> = (props) => {
   const handleAddType = async () => {
     if (listCateStore.listCateData.length && listCate.name) {
       const listCateFound: any = listCateStore.listCateData.filter((item) => item.cateId === listCate.cateId);
-      console.log('listCateFound', listCateFound)
       if (listCateFound[0]?.name.toUpperCase() === listCate.name.toUpperCase()) {
         setIsNameExist(true);
         return;
@@ -173,7 +172,7 @@ const ListCateDialog: React.FC<IDialog> = (props) => {
         fullWidth={true}
         className='dialog-model'
       >
-        <DialogTitle>{"Use Google's location service?"}</DialogTitle>
+        <DialogTitle>{isEdit ? "Edit Type Of Category" : "Add Type Of Category"}</DialogTitle>
         <DialogContent className='dialog-content'>
           
           <div className='dg-left-content'>

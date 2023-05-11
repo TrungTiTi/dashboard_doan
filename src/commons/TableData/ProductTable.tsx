@@ -1,4 +1,4 @@
-import { Checkbox, TableCell, TableRow } from '@mui/material';
+import { Checkbox, Link, TableCell, TableRow } from '@mui/material';
 import * as React from 'react';
 import ProductDialog from '../ProductDialog/ProductDialog';
 import { useUserStore } from '../../stores/UserStore';
@@ -33,6 +33,7 @@ const ProductTable = (props: ICategory) => {
             handleClick(event, row.id)
         }
     }
+    console.log('row', row);
     
     return (
         <>
@@ -84,6 +85,11 @@ const ProductTable = (props: ICategory) => {
                     {
                         row?.youtubeLink &&
                         <iframe width={200} height={100} src={row?.youtubeLink}></iframe>
+                    }
+                </TableCell>
+                <TableCell align="right">
+                    {
+                        row?.instructFile && <a href={row.instructFile}>{row.instructFile}</a>
                     }
                 </TableCell>
             </TableRow>

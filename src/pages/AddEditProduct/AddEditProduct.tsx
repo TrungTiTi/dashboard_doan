@@ -29,45 +29,52 @@ function createData(
   };
 }
 
+const headCells: any[] = [
+    {
+      id: 'name',
+      numeric: false,
+      disablePadding: true,
+      label: 'Name',
+    },
+    {
+      id: 'image',
+      numeric: true,
+      disablePadding: false,
+      label: 'Image',
+    },
+    {
+      id: 'price',
+      numeric: true,
+      disablePadding: false,
+      label: 'Price',
+    },
+    {
+      id: 'cateId',
+      numeric: true,
+      disablePadding: false,
+      label: 'Cate Id',
+    },
+    {
+      id: 'listCateId',
+      numeric: true,
+      disablePadding: false,
+      label: 'List Cate Id',
+    },
+    {
+      id: 'youtube',
+      numeric: true,
+      disablePadding: false,
+      label: 'Youtube Link',
+    },
+    {
+      id: 'instructFile',
+      numeric: true,
+      disablePadding: false,
+      label: 'File Link',
+    },
+  ];
+
 const AddEditProduct = () => {
-    const headCells: any[] = [
-        {
-          id: 'name',
-          numeric: false,
-          disablePadding: true,
-          label: 'Name',
-        },
-        {
-          id: 'image',
-          numeric: true,
-          disablePadding: false,
-          label: 'Image',
-        },
-        {
-          id: 'price',
-          numeric: true,
-          disablePadding: false,
-          label: 'Price',
-        },
-        {
-          id: 'cateId',
-          numeric: true,
-          disablePadding: false,
-          label: 'Cate Id',
-        },
-        {
-          id: 'listCateId',
-          numeric: true,
-          disablePadding: false,
-          label: 'List Cate Id',
-        },
-        {
-          id: 'youtube',
-          numeric: true,
-          disablePadding: false,
-          label: 'Youtube Link',
-        },
-      ]      
   
   const [openDialog, setOpenDialog] = React.useState<boolean>(false);
   const productStore= useProductStore();

@@ -82,7 +82,6 @@ const OrderManagement = () => {
   }, [openDialog, loading]);
 
   React.useEffect(() => {
-    console.log('123', orderStore.orderData)
     setOrder(orderStore.orderData);
   }, [orderStore.orderData]);
 

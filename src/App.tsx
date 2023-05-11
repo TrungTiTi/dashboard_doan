@@ -12,6 +12,7 @@ import PrivateRoute from './routes/PrivateRoute';
 import UserTable from './pages/User/User';
 import OrderTable from './commons/TableData/OrderTable';
 import OrderManagement from './pages/OrderManagement/OrderManagement';
+import ResetPass from './pages/SignInAndSignUp/ResetPassword';
 
 
 const Element = ({Children, className}: any) => {
@@ -33,6 +34,8 @@ function App() {
       <Route path='' element={<SignIn />}>
       </Route>
       <Route path='/sign-up' element={<SignUp />}>
+      </Route>
+      <Route path='/reset-pass' element={<ResetPass />}>
       </Route>
       <Route 
         path='/type' 

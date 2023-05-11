@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -17,7 +16,6 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FormValues } from '../../Constant';
 import { auth, signInWithEmailAndPassword } from '../../firebase';
-import { getDatabase, ref, onValue} from "firebase/database";
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../../stores/UserStore';
 import { observer } from 'mobx-react-lite';
@@ -77,7 +75,7 @@ const SignIn = () => {
     console.log(error); 
     }
   }
-console.log('uuu', userStore.currentUser)
+
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -135,7 +133,7 @@ console.log('uuu', userStore.currentUser)
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
+                <Link href="/reset-pass" variant="body2">
                   Forgot password?
                 </Link>
               </Grid>
