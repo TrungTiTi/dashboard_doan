@@ -6,6 +6,7 @@ import DialogModel from '../../commons/Dialog/Dialog';
 import ProductDialog from '../../commons/ProductDialog/ProductDialog';
 import TableData from '../../commons/TableData/TableData';
 import { useProductStore } from '../../stores/Product';
+import { useUserStore } from '../../stores/UserStore';
 
 interface Data {
   name: string,
@@ -28,51 +29,59 @@ function createData(
   };
 }
 
+const headCells: any[] = [
+    {
+      id: 'name',
+      numeric: false,
+      disablePadding: true,
+      label: 'Name',
+    },
+    {
+      id: 'image',
+      numeric: true,
+      disablePadding: false,
+      label: 'Image',
+    },
+    {
+      id: 'price',
+      numeric: true,
+      disablePadding: false,
+      label: 'Price',
+    },
+    {
+      id: 'cateId',
+      numeric: true,
+      disablePadding: false,
+      label: 'Cate Id',
+    },
+    {
+      id: 'listCateId',
+      numeric: true,
+      disablePadding: false,
+      label: 'List Cate Id',
+    },
+    {
+      id: 'youtube',
+      numeric: true,
+      disablePadding: false,
+      label: 'Youtube Link',
+    },
+    {
+      id: 'instructFile',
+      numeric: true,
+      disablePadding: false,
+      label: 'File Link',
+    },
+  ];
+
 const AddEditProduct = () => {
-    const headCells: any[] = [
-        {
-          id: 'name',
-          numeric: false,
-          disablePadding: true,
-          label: 'Name',
-        },
-        {
-          id: 'image',
-          numeric: true,
-          disablePadding: false,
-          label: 'Image',
-        },
-        {
-          id: 'price',
-          numeric: true,
-          disablePadding: false,
-          label: 'Price',
-        },
-        {
-          id: 'cateId',
-          numeric: true,
-          disablePadding: false,
-          label: 'Cate Id',
-        },
-        {
-          id: 'listCateId',
-          numeric: true,
-          disablePadding: false,
-          label: 'List Cate Id',
-        },
-        {
-          id: 'id',
-          numeric: true,
-          disablePadding: false,
-          label: 'ID',
-        },
-      ]      
   
   const [openDialog, setOpenDialog] = React.useState<boolean>(false);
   const productStore= useProductStore();
   const [productData, setProductData] = React.useState<any>([]);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [isEdit, setIsEdit] = React.useState<boolean>(false);
+  const userStore = useUserStore();
 
   React.useEffect(() => {
     productStore.getProducts();
@@ -85,7 +94,7 @@ const AddEditProduct = () => {
   return (
     <div className='table-dashboard'>
       <div className='table-db-container'>
-      <Button onClick={() => setOpenDialog(true)}>Add</Button>
+      <Button onClick={() => setOpenDialog(true)} disabled={!userStore.currentUser?.isPermission}>Add</Button>
         <TableData
           rows={productData || []}
           headCells={headCells}

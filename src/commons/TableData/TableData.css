@@ -6,3 +6,7 @@ table tr th, td {
     border: solid #e9ecef;
     border-width: 1px;
 }
+
+.table-container {
+    height: 80%;
+}

@@ -1,6 +1,6 @@
 import { Checkbox, TableCell, TableRow } from '@mui/material';
 import * as React from 'react';
-import DialogModel from '../Dialog/Dialog';
+import ProductDialog from '../ProductDialog/ProductDialog';
 import { useUserStore } from '../../stores/UserStore';
 
 interface ICategory {
@@ -10,7 +10,7 @@ interface ICategory {
     labelId: string;
     setLoading?: (e: boolean) => void;
 }
-const CategoryTable = (props: ICategory) => {
+const OrderTable = (props: ICategory) => {
     const {
         row,
         handleClick = () => {},
@@ -33,7 +33,8 @@ const CategoryTable = (props: ICategory) => {
             handleClick(event, row.id)
         }
     }
-
+    console.log(222, row);
+    
     return (
         <>
             <TableRow
@@ -61,27 +62,20 @@ const CategoryTable = (props: ICategory) => {
                 padding="none"
                 onClick={() => handleShowEditDialog()}
                 >
-                {row.name}
+                {row?.ownName}
                 </TableCell>
-                <TableCell align="right">{row.title}</TableCell>
-                {
-                row?.image &&
+                <TableCell align="right">{row?.price}</TableCell>
+                <TableCell align="right">{row?.address}</TableCell>
+                <TableCell align="right">{row?.email}</TableCell>
                 <TableCell align="right">
-                    <img style={{width: 50, height: 50}} src={row.image} />
+                    {row?.licensePlate}
                 </TableCell>
-                }
-                <TableCell align="right">{row.id}</TableCell>
+                <TableCell align="right">
+                    {row?.type}
+                </TableCell>
             </TableRow>
-            <DialogModel
-                open={openEditDialog}
-                setOpen={setOpenEditDialog}
-                isEdit={true}
-                data={row}
-                setLoading={setLoading}
-            >
-            </DialogModel>
         </>
     )
 }
 
-export default CategoryTable;
+export default OrderTable;

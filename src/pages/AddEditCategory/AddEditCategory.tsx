@@ -76,12 +76,13 @@ const AddEditCategory = () => {
     setCategoryData(categoryStore.categoryData);
     
   }, [categoryStore.categoryData.length, openDialog]);
-  console.log('1111111',userStore.currentUser, userStore.userListData);
+
+
 
   return (
     <div className='table-dashboard'>
       <div className='table-db-container'>
-      <Button onClick={() => setOpenDialog(true)}>Add</Button>
+      <Button onClick={() => setOpenDialog(true)} disabled={!userStore.currentUser?.isPermission}>Add</Button>
         <TableData
           rows={categoryData || []}
           headCells={headCells}

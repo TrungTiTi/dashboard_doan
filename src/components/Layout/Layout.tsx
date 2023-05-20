@@ -4,6 +4,8 @@ import './Layout.css';
 import CategoryIcon from '@mui/icons-material/Category';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import BallotIcon from '@mui/icons-material/Ballot';
+import PersonIcon from '@mui/icons-material/Person';
+import FilterFramesIcon from '@mui/icons-material/FilterFrames';
 import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt';
 import { ILayout, NAV_CLASS_NAME } from '../../Constant';
 
@@ -29,8 +31,14 @@ const listLayout = [
     {
         link: '/user',
         label: 'User',
-        icon: <BallotIcon />,
+        icon: <PersonIcon />,
         className: NAV_CLASS_NAME.USER
+    },
+    {
+        link: '/order',
+        label: 'Order',
+        icon: <FilterFramesIcon />,
+        className: NAV_CLASS_NAME.ORDER
     },
 ];
 

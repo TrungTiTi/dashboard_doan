@@ -25,6 +25,7 @@ import { TYPE_TABLE } from '../../Constant';
 import CategoryTable from './CategoryTable';
 import ProductTable from './ProductTable';
 import ListTypeTable from './ListTypeTable';
+import OrderTable from './OrderTable';
 
 interface Data {
   title: string;
@@ -185,7 +186,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           id="tableTitle"
           component="div"
         >
-          Nutrition
+          Information
         </Typography>
       )}
       {numSelected > 0 ? (
@@ -283,7 +284,7 @@ const TableData: React.FC<ITable> = (props) => {
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <EnhancedTableToolbar numSelected={selected.length} setShowDialog={setShowConfirmDelete} />
-        <TableContainer>
+        <TableContainer className='table-container'>
           <Table
             sx={{ width: '100%' }}
             aria-labelledby="tableTitle"
@@ -328,6 +329,16 @@ const TableData: React.FC<ITable> = (props) => {
                     case TYPE_TABLE.LISTCATE:   
                       return (
                         <ListTypeTable
+                          row={row}
+                          handleClick={handleClick}
+                          isItemSelected={isItemSelected}
+                          labelId={labelId}
+                          setLoading={setLoading}
+                        />
+                      )
+                    case TYPE_TABLE.ORDER_MANAGEMENT:   
+                      return (
+                        <OrderTable
                           row={row}
                           handleClick={handleClick}
                           isItemSelected={isItemSelected}

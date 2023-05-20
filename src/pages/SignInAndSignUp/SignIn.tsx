@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -76,7 +75,7 @@ const SignIn = () => {
     console.log(error); 
     }
   }
-console.log('uuu', userStore.currentUser)
+
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -134,7 +133,7 @@ console.log('uuu', userStore.currentUser)
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
+                <Link href="/reset-pass" variant="body2">
                   Forgot password?
                 </Link>
               </Grid>
