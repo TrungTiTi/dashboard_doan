@@ -58,6 +58,10 @@ export class ProductStore {
   onResetUrl = () => {
     this.urlFile = "";
   };
+
+  onResetProgress = () => {
+    this.progFile = 0;
+  }
 }
 
 export const productStore = new ProductStore();

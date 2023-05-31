@@ -8,6 +8,7 @@ import TableData from '../../commons/TableData/TableData';
 import { useProductStore } from '../../stores/Product';
 import { useUserStore } from '../../stores/UserStore';
 import { useOrderStore } from '../../stores/OrderStore';
+import { getDatabase, onValue, ref } from 'firebase/database';
 
 interface Data {
   name: string,
@@ -68,6 +69,12 @@ const OrderManagement = () => {
           disablePadding: false,
           label: 'Type',
         },
+        {
+          id: 'status',
+          numeric: true,
+          disablePadding: false,
+          label: 'Status',
+        }
       ]      
   
   const [openDialog, setOpenDialog] = React.useState<boolean>(false);
@@ -81,9 +88,35 @@ const OrderManagement = () => {
     orderStore.getOrders();
   }, [openDialog, loading]);
 
+  const getOrderData = async () => {
+    try {
+      setLoading(true);
+      const docR = getDatabase();
+      const starCountRef = ref(docR, "orders/");
+      onValue(starCountRef, (snapshot) => {
+        setOrder([]);
+        const data = snapshot.val();
+        if (data) {
+          Object.values(data).map((todo) => {
+            setOrder((oldArray: any) => [...oldArray, todo]);
+          });
+          // orderStore.onSetOrderList([data]);
+        }
+      });
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
+
   React.useEffect(() => {
-    setOrder(orderStore.orderData);
-  }, [orderStore.orderData]);
+    getOrderData();
+
+  }, [])
+
+  // React.useEffect(() => {
+  //   setOrder(orderStore.orderData);
+  // }, [orderStore.orderData]);
 
   return (
     <div className='table-dashboard'>

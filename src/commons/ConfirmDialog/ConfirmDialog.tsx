@@ -15,6 +15,7 @@ import { useCategoryStore } from '../../stores/Category';
 import { useProductStore } from '../../stores/Product';
 import { useListCateStore } from '../../stores/ListCateStore';
 import { useOrderStore } from '../../stores/OrderStore';
+import Toast from '../../Utill';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -59,6 +60,10 @@ const ConfirmDialog: React.FC<IDialog> = (props) => {
     const productStore= useProductStore();
     const listCateStore= useListCateStore();
     const orderStore= useOrderStore();
+    const [toast, setToast] = React.useState<{success: boolean, show: boolean}>({
+      success: false,
+      show: false
+    });
   
     const handleClose = () => {
         setOpen(false);
@@ -103,12 +108,27 @@ const ConfirmDialog: React.FC<IDialog> = (props) => {
                 }
               }
           }
+          setToast({
+            success: true,
+            show: true,
+          })
       } catch (error) {
-          
+        setToast({
+          success: false,
+          show: true
+        })
       }
       setLoading(false);
       setOpen(false);
     }
+  
+  const handleCloseToast = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setToast({...toast, show: false});
+  };
 
   return (
     <div>
@@ -130,6 +150,12 @@ const ConfirmDialog: React.FC<IDialog> = (props) => {
             <Button onClick={handleDelete}>Save</Button>
           </DialogActions>
       </Dialog>
+      <Toast 
+        open={toast.show}
+        type={toast.success ? 'success' : 'error'}
+        text={toast.success ? 'Delete Success!' : 'Delete Fail!'}
+        handleClose={handleCloseToast}
+      />
     </div>
   );
 }

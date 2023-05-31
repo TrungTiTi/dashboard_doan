@@ -43,6 +43,7 @@ import { useListCateStore } from "../../stores/ListCateStore";
 import { useCategoryStore } from "../../stores/Category";
 import { observer } from "mobx-react-lite";
 import { useProductStore } from "../../stores/Product";
+import Toast from "../../Utill";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -92,6 +93,15 @@ interface IProduct {
   instructFile? : string;
 }
 
+const TYPE_PRODUCT = [
+  {
+    type: 'FILE'
+  },
+  {
+    type: 'VIDEO'
+  }
+]
+
 const ProductDialog: React.FC<IDialog> = (props) => {
   const {
     open,
@@ -119,6 +129,11 @@ const ProductDialog: React.FC<IDialog> = (props) => {
   const [pdfFile, setPdfFile] = React.useState<any>();
   const [progress, setProgress] = React.useState<number>(0);
   const [urlF, setUrlF] = React.useState<string>("");
+  const [isVideoType, setIsVideoType] = React.useState<boolean>(true);
+  const [toast, setToast] = React.useState<{success: boolean, show: boolean}>({
+    success: false,
+    show: false
+  });
 
   const handleClose = () => {
     setOpen(false);
@@ -137,6 +152,11 @@ const ProductDialog: React.FC<IDialog> = (props) => {
   React.useEffect(() => {
     if (isEdit && data) {
       handleGetDataWhenEdit(data);
+      if (data?.instructFile) {
+        setIsVideoType(false);
+      } else {
+        setIsVideoType(true);
+      }
     }
   }, [isEdit, data]);
 
@@ -221,7 +241,7 @@ const ProductDialog: React.FC<IDialog> = (props) => {
           instructFile: product?.instructFile || ""
         });
         setLoading(false);
-      setOpen(false);
+        setOpen(false);
         onResetData();
       } else {
         imagePreview.map((image: any) => {
@@ -252,10 +272,18 @@ const ProductDialog: React.FC<IDialog> = (props) => {
           );
         });
       }
+      setToast({
+        success: true,
+        show: true,
+      });
     } catch (error) {
       setLoading(false);
       setOpen(false);
       onResetData();
+      setToast({
+        success: false,
+        show: true
+      });
     } finally {
       
       productStore.getProducts();
@@ -267,7 +295,9 @@ const ProductDialog: React.FC<IDialog> = (props) => {
       !product.name ||
       !product.cateId ||
       !product.image.length ||
-      !product.listCateId
+      !product.listCateId || (
+        product.listCateId && !onCheckListCate(product.listCateId).length
+      )
     ) {
       return true;
     }
@@ -276,6 +306,11 @@ const ProductDialog: React.FC<IDialog> = (props) => {
     }
     return false;
   };
+
+  const onCheckListCate = (listCateId: string) => {
+    const listCateFound = listCateSelect.filter((item) => item.id === listCateId);
+    return listCateFound;
+  }
 
   const onResetData = () => {
     setProduct({
@@ -296,7 +331,7 @@ const ProductDialog: React.FC<IDialog> = (props) => {
   };
 
   const handleSelectCategory = (e: SelectChangeEvent) => {
-    setProduct({ ...product, cateId: e.target.value });
+    setProduct({ ...product, cateId: e.target.value, listCateId: ''});
     const listCateR: any[] = listCateStore.listCateData.filter(
       (item) => item.cateId === e.target.value
     );
@@ -305,6 +340,25 @@ const ProductDialog: React.FC<IDialog> = (props) => {
 
   const handleSelectCateInCategory = (e: SelectChangeEvent) => {
     setProduct({ ...product, listCateId: e.target.value });
+  };
+
+  const handleSelectType = (e: SelectChangeEvent) => {
+    if (e.target.value === 'FILE') {
+      setIsVideoType(false);
+      setProduct({ ...product, youtubeLink: '' })
+    } else {
+      setIsVideoType(true);
+      productStore.onResetUrl();
+      productStore.onResetProgress();
+    }
+  };
+
+  const handleCloseToast = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setToast({...toast, show: false});
   };
 
   return (
@@ -375,23 +429,25 @@ const ProductDialog: React.FC<IDialog> = (props) => {
                   : null}
               </Select>
             </FormControl>
-            {
-              !product?.instructFile && 
-              <div className="text__line">
-                <span>File</span>
-                <input
-                  type="file"
-                  style={{ width: "50%" }}
-                  onChange={(e: any) => {
-                    productStore.getUrlFile(e?.target?.files[0]);
-                  }}
-                />
-            </div>
-            }
+            <FormControl sx={{ m: 1, minWidth: 150 }}>
+              <InputLabel variant="standard" htmlFor="uncontrolled-native">
+                Choose Type Product
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="select-list-cate"
+                value={isVideoType ? TYPE_PRODUCT[1].type : TYPE_PRODUCT[0].type}
+                label="Choose Type"
+                onChange={handleSelectType}
+                disabled={isEdit}
+              >
+                {TYPE_PRODUCT.map((item) => {
+                      return <MenuItem value={item.type}>{item.type}</MenuItem>;
+                    })
+                }
+              </Select>
+            </FormControl>
             
-            {productStore.progFile && (
-              <LinearProgressWithLabel value={productStore.progFile} />
-            )}
           </div>
           <div className="dg-right-content">
             <div>
@@ -415,17 +471,37 @@ const ProductDialog: React.FC<IDialog> = (props) => {
                 value={product?.price}
               />
             </div>
-            <div>
-              <span>Video Link</span> <br></br>
-              <TextField
-                id="outlined-basic"
-                type={"text"}
-                onChange={(e) =>
-                  setProduct({ ...product, youtubeLink: e.target.value })
-                }
-                value={product?.youtubeLink}
-              />
-            </div>
+            {
+              isVideoType && !isEdit ? 
+                (<div>
+                  <span>Video Link</span> <br></br>
+                  <TextField
+                    id="outlined-basic"
+                    type={"text"}
+                    onChange={(e) =>
+                      setProduct({ ...product, youtubeLink: e.target.value })
+                    }
+                    value={product?.youtubeLink}
+                  />
+                </div>) : (
+                  !product?.instructFile && !isEdit && 
+                  <div className="text__line">
+                    <span>File</span>
+                    <input
+                      type="file"
+                      style={{ width: "50%" }}
+                      onChange={(e: any) => {
+                        productStore.getUrlFile(e?.target?.files[0]);
+                      }}
+                    />
+                  </div>
+                )
+            }
+
+            {productStore.progFile ? (
+              <LinearProgressWithLabel value={productStore.progFile} />
+            ) : null}
+
             {product.youtubeLink && (
               <iframe
                 width={220}
@@ -446,6 +522,12 @@ const ProductDialog: React.FC<IDialog> = (props) => {
           </DialogActions>
         )}
       </Dialog>
+      <Toast 
+        open={toast.show}
+        type={toast.success ? 'success' : 'error'}
+        text={toast.success ? 'Delete Success!' : 'Delete Fail!'}
+        handleClose={handleCloseToast}
+      />
     </div>
   );
 };

@@ -16,6 +16,8 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import _ from 'lodash';
 import { useCategoryStore } from '../../../stores/Category';
 import { useListCateStore } from '../../../stores/ListCateStore';
+import { TEXT_ERROR } from '../../Constant';
+import Toast from '../../../Utill';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -75,6 +77,10 @@ const ListCateDialog: React.FC<IDialog> = (props) => {
   const categoryStore = useCategoryStore();
   const listCateStore = useListCateStore();
   const [isNameExist, setIsNameExist] = React.useState<boolean>(false);
+  const [toast, setToast] = React.useState<{success: boolean, show: boolean}>({
+    success: false,
+    show: false
+  });
 
   React.useEffect(() => {
     categoryStore.getCates();
@@ -119,24 +125,42 @@ const ListCateDialog: React.FC<IDialog> = (props) => {
 
   const handleAddType = async () => {
     if (listCateStore.listCateData.length && listCate.name) {
-      const listCateFound: any = listCateStore.listCateData.filter((item) => item.cateId === listCate.cateId);
-      if (listCateFound[0]?.name.toUpperCase() === listCate.name.toUpperCase()) {
-        setIsNameExist(true);
-        return;
-      }
+      const listCateEditData = isEdit && listCateStore.listCateData.filter((item) => item.id !== listCate.id) || [];
+      const listCateFound = isEdit ? handleFilterData(listCateEditData) : 
+        (handleFilterData(listCateStore.listCateData));
+        if (listCateFound.length) {
+          setIsNameExist(true);
+          return;
+        }
+      // const listCateFound: any = listCateStore.listCateData.filter((item) => item.cateId === listCate.cateId);
+      // if (listCateFound[0]?.name.toUpperCase() === listCate.name.toUpperCase()) {
+      //   setIsNameExist(true);
+      //   return;
+      // }
     }
     setLoading(true);
     try {
         const newFood = isEdit ? await updateDoc(doc(db, "listCate", data.id), handlePutListCate(listCate)) 
         : await addDoc(collection(db, "listCate"), handlePutListCate(listCate))
       listCateStore.getListCates();
+      setToast({
+        success: true,
+        show: true,
+      });
     } catch (error) {
-      
+      setToast({
+        success: false,
+        show: true
+      });
     }
     setLoading(false);
     setOpen(false);
     onResetData();
 
+  };
+
+  const handleFilterData = (value: any[]) => {
+    return value.filter((item) => item.name.toUpperCase() === listCate.name?.toUpperCase());
   };
 
   const onCheckForm = () => {
@@ -160,7 +184,15 @@ const ListCateDialog: React.FC<IDialog> = (props) => {
 
   const handleChange = (value: any, field: string) => {
     setListCate({...listCate, [field]: value})
-  }
+  };
+
+  const handleCloseToast = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setToast({...toast, show: false});
+  };
 
   return (
     <div>
@@ -177,7 +209,7 @@ const ListCateDialog: React.FC<IDialog> = (props) => {
           
           <div className='dg-left-content'>
           <FormControl sx={{ m: 1, minWidth: 150 }}>
-          <InputLabel variant="standard" htmlFor="uncontrolled-native">Select Category</InputLabel>
+            <InputLabel variant="standard" htmlFor="uncontrolled-native">Select Category</InputLabel>
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
@@ -206,6 +238,7 @@ const ListCateDialog: React.FC<IDialog> = (props) => {
                 }} 
               value={listCate?.name} 
               error={isNameExist}
+              helperText={isNameExist ? TEXT_ERROR.EXISTED : ""}
             />
             <div>
               <span>Detail title</span> <br></br>
@@ -253,6 +286,12 @@ const ListCateDialog: React.FC<IDialog> = (props) => {
             <Button onClick={handleAddType} disabled={onCheckForm()}>Save</Button>
           </DialogActions>
       </Dialog>
+      <Toast 
+        open={toast.show}
+        type={toast.success ? 'success' : 'error'}
+        text={toast.success ? 'Delete Success!' : 'Delete Fail!'}
+        handleClose={handleCloseToast}
+      />
     </div>
   );
 }

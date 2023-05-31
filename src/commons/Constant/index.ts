@@ -7,3 +7,10 @@ export enum TYPE_TABLE {
 export enum TEXT_ERROR {
     EXISTED = 'Name is existed'
 }
+
+export const STATUS = {
+    WAIT: "Wait",
+    PENDING: "Pending",
+    DONE: "Done",
+    CANCEL: "Cancel"
+}

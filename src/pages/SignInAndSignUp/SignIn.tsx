@@ -1,3 +1,4 @@
+import React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -19,6 +20,8 @@ import { auth, signInWithEmailAndPassword } from '../../firebase';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../../stores/UserStore';
 import { observer } from 'mobx-react-lite';
+import { Snackbar } from '@mui/material';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
 function Copyright(props: any) {
   return (
@@ -26,7 +29,14 @@ function Copyright(props: any) {
      
     </Typography>
   );
-}
+};
+
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  props,
+  ref,
+) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const schemaSignUp = yup.object().shape({
   email: yup.string().required("Please fill out this field!")
@@ -48,6 +58,7 @@ const theme = createTheme();
 const SignIn = () => {
   const navigate = useNavigate();
   const userStore = useUserStore();
+  const [open, setOpen] = React.useState(false);
 
   const {
     handleSubmit,
@@ -72,9 +83,17 @@ const SignIn = () => {
         }
        
     }catch (error) {
-    console.log(error); 
+      setOpen(true);
     }
-  }
+  };
+
+  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -147,6 +166,11 @@ const SignIn = () => {
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+          Wrong password or email!
+        </Alert>
+      </Snackbar>
     </ThemeProvider>
   );
 }

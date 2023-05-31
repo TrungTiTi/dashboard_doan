@@ -12,26 +12,36 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import AdbIcon from '@mui/icons-material/Adb';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import * as yup from "yup";
 import { useForm } from 'react-hook-form';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FormValues } from '../../Constant';
 import { auth } from '../../firebase';
 import { sendPasswordResetEmail } from 'firebase/auth';
+import { Snackbar } from '@mui/material';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
 const theme = createTheme();
 
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  props,
+  ref,
+) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 const schemaSignUp = yup.object().shape({
-    email: yup.string().required("Please fill out this field!")
-        .matches(
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-        "Please enter the correct format!"
-        )
-    })
+  email: yup.string().required("Please fill out this field!")
+      .matches(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+      "Please enter the correct format!"
+      )
+  })
 
 const ResetPass =  () => {
     const [email, setEmail] = useState<string>('');
+    const [open, setOpen] = React.useState(false);
 
     const {
         handleSubmit,
@@ -44,11 +54,20 @@ const ResetPass =  () => {
     const onSubmit = async(data: FormValues) => {
         try {
             const ob: any = await sendPasswordResetEmail(auth, data.email);
-            
+            console.log('ob', ob);
+            setOpen(true);
         }catch (error) {
         console.log(error); 
         }
-    }
+    };
+
+    const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+  
+      setOpen(false);
+    };
 
     return (
     <ThemeProvider theme={theme}>
@@ -100,6 +119,11 @@ const ResetPass =  () => {
           </Box>
         </Box>
       </Container>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+          Send request success, please check your email!
+        </Alert>
+      </Snackbar>
     </ThemeProvider>
     );
 }

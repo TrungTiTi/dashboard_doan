@@ -30,6 +30,7 @@ import _ from "lodash";
 import { useCategoryStore } from "../../stores/Category";
 import { TEXT_ERROR } from "../../Constant";
 import { useNavigate } from "react-router-dom";
+import Toast from "../../Utill";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -87,6 +88,8 @@ const DialogModel: React.FC<IDialog> = (props) => {
 
   const handleClose = () => {
     setOpen(false);
+    onResetData();
+    setIsNameExist(false);
   };
 
   const FormCategory = () => {};
@@ -133,9 +136,9 @@ const DialogModel: React.FC<IDialog> = (props) => {
 
   const handleAddType = async () => {
     if (categoryStore.categoryData.length) {
-      const categoryFound = categoryStore.categoryData.filter(
-        (item) => item.name.toUpperCase() === category.name?.toUpperCase()
-      );
+      const categoryEdit = isEdit && categoryStore.categoryData.filter((item) => item.id !== data.id) || [];
+      const categoryFound = isEdit ? handleFilterData(categoryEdit) : 
+        (handleFilterData(categoryStore.categoryData));
       if (categoryFound.length) {
         setIsNameExist(true);
         return;
@@ -144,11 +147,14 @@ const DialogModel: React.FC<IDialog> = (props) => {
     setLoading(true);
     try {
       if (isEdit && data.image === category.image) {
-        const newType: any = await updateDoc(doc(db, "category", data.id), {
+        await updateDoc(doc(db, "category", data.id), {
           name: category.name,
           title: category.title,
         });
-        
+        setLoading(false);
+        setOpen(false);
+        onResetData();
+        // window.location.reload();
       } else {
         const storageRef = ref(storage, `Files/${imagePreview.name}`);
         const uploadTask = uploadBytesResumable(storageRef, imagePreview);
@@ -174,23 +180,26 @@ const DialogModel: React.FC<IDialog> = (props) => {
                     title: category.title,
                     image: url,
                   });
-              if (newType) {
                 setLoading(false);
                 setOpen(false);
                 onResetData();
-                // window.location.reload()
-              }
+                // window.location.reload();
             });
           }
         );
       }
-    } catch (error) {}
-    if (isEdit) {
-      window.location.reload();
+    } catch (error) {} finally {
+      if (isEdit) {
+        window.location.reload();
+      }
     }
     // setLoading(false);
     // setOpen(false);
     // onResetData();
+  };
+
+  const handleFilterData = (value: any[]) => {
+    return value.filter((item) => item.name.toUpperCase() === category.name?.toUpperCase());
   };
 
   const onCheckForm = () => {
@@ -274,6 +283,7 @@ const DialogModel: React.FC<IDialog> = (props) => {
           </DialogActions>
         )}
       </Dialog>
+      {/* <Toast /> */}
     </div>
   );
 };

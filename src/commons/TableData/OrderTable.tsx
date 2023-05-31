@@ -2,6 +2,7 @@ import { Checkbox, TableCell, TableRow } from '@mui/material';
 import * as React from 'react';
 import ProductDialog from '../ProductDialog/ProductDialog';
 import { useUserStore } from '../../stores/UserStore';
+import OrderDialog from '../Dialog/OrderDialog';
 
 interface ICategory {
     row: any;
@@ -73,7 +74,18 @@ const OrderTable = (props: ICategory) => {
                 <TableCell align="right">
                     {row?.type}
                 </TableCell>
+                <TableCell align="right">
+                    {row?.status}
+                </TableCell>
             </TableRow>
+            <OrderDialog 
+                open={openEditDialog}
+                setOpen={setOpenEditDialog}
+                isEdit={true}
+                data={row}
+                setLoading={setLoading}
+            >
+            </OrderDialog>
         </>
     )
 }

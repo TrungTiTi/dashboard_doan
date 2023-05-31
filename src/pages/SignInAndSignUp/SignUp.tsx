@@ -21,6 +21,8 @@ import { doc, setDoc } from 'firebase/firestore';
 import { getDatabase, ref, set } from "firebase/database";
 import { auth, db } from '../../firebase';
 import { useNavigate } from 'react-router-dom';
+import { Snackbar } from '@mui/material';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
 function Copyright(props: any) {
   return (
@@ -34,6 +36,13 @@ function Copyright(props: any) {
     </Typography>
   );
 }
+
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  props,
+  ref,
+) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const theme = createTheme();
 
@@ -59,16 +68,19 @@ export default function SignUp() {
   const {handleSubmit, register, formState: { errors }} = useForm<FormValues>({
     resolver: yupResolver(schemaSignUp),
   });
+  const [open, setOpen] = React.useState({
+    success: false,
+    fail: false
+  });
 
   const onSubmit = async(data: FormValues) => {
-    console.log('data', data);
     let user: any = null;
     try {
     user = await createUserWithEmailAndPassword(auth, data?.email, data?.password);
     const docRef= doc(db,"users",user?.user.uid);
     
       if(user){
-          setDoc(docRef, {
+         await setDoc(docRef, {
             firstName: data.firstName,
             lastName: data.lastName,
             email: data.email,
@@ -76,7 +88,7 @@ export default function SignUp() {
             isPermission: false
         });
         const db = getDatabase();
-        set(ref(db, 'users/' + user.user.uid), {
+        await set(ref(db, 'users/' + user.user.uid), {
           firstName: data.firstName,
           lastName: data.lastName,
           email: data.email,
@@ -84,12 +96,32 @@ export default function SignUp() {
           isPermission: false
         });
       }
-      console.log("successfull");
-      // navigate('/');
+      setOpen({
+        success: true,
+        fail: false
+      })
+      setTimeout(() => {
+        navigate('/');
+      }, 1000)
     } catch (error) {
+      setOpen({
+        success: false,
+        fail: true
+      })
       console.log(error);
     }
-  }
+  };
+
+  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen({
+      success: false,
+      fail: false
+    });
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -161,12 +193,12 @@ export default function SignUp() {
                   helperText={errors?.password?.message}
                 />
               </Grid>
-              <Grid item xs={12}>
+              {/* <Grid item xs={12}>
                 <FormControlLabel
                   control={<Checkbox value="allowExtraEmails" color="primary" />}
                   label="I want to receive inspiration, marketing promotions and updates via email."
                 />
-              </Grid>
+              </Grid> */}
             </Grid>
             <Button
               type="submit"
@@ -187,6 +219,16 @@ export default function SignUp() {
         </Box>
         <Copyright sx={{ mt: 5 }} />
       </Container>
+      <Snackbar open={open.success} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+          Sign Up successfull!
+        </Alert>
+      </Snackbar>
+      <Snackbar open={open.fail} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+          Sign Up fail!
+        </Alert>
+      </Snackbar>
     </ThemeProvider>
   );
 }
