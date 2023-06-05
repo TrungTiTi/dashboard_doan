@@ -289,7 +289,7 @@ const ListCateDialog: React.FC<IDialog> = (props) => {
       <Toast 
         open={toast.show}
         type={toast.success ? 'success' : 'error'}
-        text={toast.success ? 'Delete Success!' : 'Delete Fail!'}
+        text={toast.success ? (isEdit ? 'Update Success!' : 'Add Success!') : (isEdit ? 'Update Fail!' : 'Add Fail!')}
         handleClose={handleCloseToast}
       />
     </div>

@@ -65,8 +65,8 @@ const OrderTable = (props: ICategory) => {
                 >
                 {row?.ownName}
                 </TableCell>
-                <TableCell align="right">{row?.price}</TableCell>
                 <TableCell align="right">{row?.address}</TableCell>
+                <TableCell align="right">{row?.price}</TableCell>
                 <TableCell align="right">{row?.email}</TableCell>
                 <TableCell align="right">
                     {row?.licensePlate}

@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Button, TextField } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { TYPE_TABLE } from '../../Constant';
@@ -82,12 +82,25 @@ const AddEditListCate = () => {
     setListCate(listCateStore.listCateData);
   }, [listCateStore.listCateData]);
 
+  const handleSearch = (e: any) => {
+    const searchValue = e.target?.value || '';
+    const currentData = listCateStore.listCateData.length ? listCateStore.listCateData.filter((item) => item.name.toUpperCase().includes(searchValue.toUpperCase())) : [];
+
+    setListCate(currentData);
+  };
+
   return (
     <div className='table-dashboard'>
       <div className='table-db-container'>
-      <Button onClick={() => setOpenDialog(true)} disabled={!userStore.currentUser?.isPermission}>Add</Button>
+        <div style={{display: 'flex', justifyContent: 'space-between'}}>
+          <Button onClick={() => setOpenDialog(true)} disabled={!userStore.currentUser?.isPermission}>Add</Button>
+          <div style={{display: 'flex', alignItems: 'center'}}>
+            <label>Search</label>
+            <TextField placeholder='Search name' onChange={(e) => handleSearch(e)}></TextField>
+          </div>
+        </div>
         <TableData
-          rows={listCateStore.listCateData || []}
+          rows={listCate || []}
           headCells={headCells}
           setIsEdit={setIsEdit}
           typeTable={TYPE_TABLE.LISTCATE}

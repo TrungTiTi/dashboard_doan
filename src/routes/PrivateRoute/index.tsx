@@ -24,7 +24,7 @@ const PrivateRoute: React.FC <{children: any}> = ({ children}) => {
         setUsetRealTime({});
         const data = snapshot.val();
         if (data !== null) {
-          if (userStore.currentUser) {
+          if (userStore.currentUser && data?.email === userStore.currentUser?.email) {
             handleReload(userStore.currentUser.isPermission, data.isPermission);
           }
           setUsetRealTime(data);
@@ -37,8 +37,6 @@ console.log(656565);
 
   const handleReload = (oldPermission: boolean, newPermission: boolean) => {
     if(oldPermission !== newPermission) {
-      console.log('1599', oldPermission, newPermission, userStorage, userStore.currentUser);
-      
       setOpen(true);
     }
   }
@@ -49,6 +47,7 @@ console.log(656565);
     // }
     localStorage.clear();
     setOpen(false);
+    userStore.resetData();
     navigate('/');
   }
 

@@ -82,9 +82,10 @@ const DialogModel: React.FC<IDialog> = (props) => {
   const [isNameExist, setIsNameExist] = React.useState<boolean>(false);
   const categoryStore = useCategoryStore();
 
-  React.useEffect(() => {
-    categoryStore.getCates();
-  }, []);
+  // React.useEffect(() => {
+  //   categoryStore.getCates();
+  // }, []);
+console.log('696969');
 
   const handleClose = () => {
     setOpen(false);
@@ -154,6 +155,7 @@ const DialogModel: React.FC<IDialog> = (props) => {
         setLoading(false);
         setOpen(false);
         onResetData();
+        categoryStore.getCates();
         // window.location.reload();
       } else {
         const storageRef = ref(storage, `Files/${imagePreview.name}`);
@@ -183,6 +185,7 @@ const DialogModel: React.FC<IDialog> = (props) => {
                 setLoading(false);
                 setOpen(false);
                 onResetData();
+                categoryStore.getCates();
                 // window.location.reload();
             });
           }
@@ -190,7 +193,8 @@ const DialogModel: React.FC<IDialog> = (props) => {
       }
     } catch (error) {} finally {
       if (isEdit) {
-        window.location.reload();
+        // window.location.reload();
+        
       }
     }
     // setLoading(false);

@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Button, TextField } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 import { TYPE_TABLE } from '../../Constant';
@@ -91,10 +91,24 @@ const AddEditProduct = () => {
     setProductData(productStore.productData);
   }, [productStore.productData]);
 
+  const handleSearch = (e: any) => {
+    const searchValue = e.target?.value || '';
+  
+    const currentData = productStore.productData.length ? productStore.productData.filter((item) => item.name.toUpperCase().includes(searchValue.toUpperCase())) : [];
+
+    setProductData(currentData);
+  };
+
   return (
     <div className='table-dashboard'>
       <div className='table-db-container'>
-      <Button onClick={() => setOpenDialog(true)} disabled={!userStore.currentUser?.isPermission}>Add</Button>
+        <div style={{display: 'flex', justifyContent: 'space-between'}}>
+          <Button onClick={() => setOpenDialog(true)} disabled={!userStore.currentUser?.isPermission}>Add</Button>
+          <div style={{display: 'flex', alignItems: 'center'}}>
+            <label>Search</label>
+            <TextField placeholder='Search name' onChange={(e) => handleSearch(e)}></TextField>
+          </div>
+        </div>
         <TableData
           rows={productData || []}
           headCells={headCells}
